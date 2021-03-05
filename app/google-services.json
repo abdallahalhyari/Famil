@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "620365818234",
+    "project_id": "family-map-25fcd",
+    "storage_bucket": "family-map-25fcd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620365818234:android:4e502733c951ec22834ec3",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "620365818234-8ise91geto4f6k3uc9l91r7cf7usf265.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSIb7RN-elrDw3gb0kg0DmAPkNytDrXd8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "620365818234-8ise91geto4f6k3uc9l91r7cf7usf265.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
