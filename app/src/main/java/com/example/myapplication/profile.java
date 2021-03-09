@@ -1,9 +1,5 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,10 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -35,7 +33,7 @@ import javax.annotation.Nullable;
 
 public class profile extends AppCompatActivity {
     private static final int GALLERY_INTENT_CODE = 1023 ;
-    TextView fullName,email,phone,verifyMsg;
+    TextView fullName,email,phone,verifyMsg,userID;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userId;
@@ -54,7 +52,7 @@ public class profile extends AppCompatActivity {
         fullName = findViewById(R.id.profileName);
         email    = findViewById(R.id.profileEmail);
         resetPassLocal = findViewById(R.id.resetPasswordLocal);
-
+        userID=findViewById(R.id.id_number);
         profileImage = findViewById(R.id.profileImage);
         changeProfileImage = findViewById(R.id.changeProfile);
 
@@ -79,9 +77,11 @@ public class profile extends AppCompatActivity {
         user = fAuth.getCurrentUser();
 
         if(!user.isEmailVerified()){
-            verifyMsg.setVisibility(View.VISIBLE);
-            resendCode.setVisibility(View.VISIBLE);
-
+            //verifyMsg.setVisibility(View.VISIBLE);
+            //resendCode.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
+startActivity(new Intent(this,login.class));
+finish();
             resendCode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
@@ -98,6 +98,7 @@ public class profile extends AppCompatActivity {
                         }
                     });
                 }
+
             });
         }
 
@@ -109,9 +110,11 @@ public class profile extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if(documentSnapshot.exists()){
+                    fullName.setText(documentSnapshot.getString("location"));
                     fullName.setText(documentSnapshot.getString("name"));
                     email.setText(documentSnapshot.getString("email"));
                     phone.setText(documentSnapshot.getString("phone"));
+                    userID.setText(documentSnapshot.getString("Id"));
 
 
 
@@ -189,4 +192,7 @@ public class profile extends AppCompatActivity {
     }
 
 
+    public void Go_ADD(View view) {
+        startActivity(new Intent(view.getContext(),listEmail.class));
+    }
 }

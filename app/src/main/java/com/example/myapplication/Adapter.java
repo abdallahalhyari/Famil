@@ -1,26 +1,52 @@
 package com.example.myapplication;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-class Adapter extends RecyclerView.ViewHolder {
-    View mView;
-    public Adapter(View itemView) {
-        super(itemView);
-        mView = itemView;
+import java.util.ArrayList;
+
+public class Adapter extends RecyclerView.Adapter<Adapter.myviewholder> {
+    ArrayList<User> datalist;
+    Context context;
+
+    public Adapter(ArrayList<User> datalist, Context context) {
+        this.datalist = datalist;
+        this.context = context;
     }
 
-    public void setName(String name) {
-        TextView Name = (TextView) mView.findViewById(R.id.name);
-        Name.setText(name);
-    }
-    public void setEmail(String status) {
-        TextView Email = (TextView) mView.findViewById(R.id.email_text);
-        Email.setText(status);
+    @NonNull
+    @Override
+    public myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.activity_email, parent, false);
+        return new myviewholder(view);
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull myviewholder holder, int position) {
+        holder.t1.setText(datalist.get(position).getName());
+        holder.t2.setText(datalist.get(position).getEmail());
+        holder.t3.setText(datalist.get(position).getPhone());
+    }
 
+    @Override
+    public int getItemCount() {
+        return datalist.size();
+    }
+
+    class myviewholder extends RecyclerView.ViewHolder {
+        TextView t1, t2, t3;
+
+        public myviewholder(@NonNull View itemView) {
+            super(itemView);
+            t1 = itemView.findViewById(R.id.name);
+            t2 = itemView.findViewById(R.id.email_text);
+            t3 = itemView.findViewById(R.id.phone);
+        }
+    }
 }

@@ -31,8 +31,12 @@
             android:id="@+id/email_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="gmail" />
-
+            android:text="alhyarinmm@gmail.com" />
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="07977857865" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

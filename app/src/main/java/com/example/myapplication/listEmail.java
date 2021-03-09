@@ -1,146 +1,115 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class listEmail extends AppCompatActivity {
+   static RecyclerView recview;
+    static ArrayList<User> datalist, listfound, listcheck;
+    Adapter adapter;
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference = firebaseDatabase.getReference().child("users");
+    String IdUser;
+    HashSet<User> hashSet;
+    int x = 0;
 
-    DatabaseReference onlineRef, currentRef, counterRef;
-    FirebaseRecyclerAdapter<User, Adapter> adapter;
-    RecyclerView recyclerView;
-    RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_email);
+        recview = findViewById(R.id.recycler_view);
+        recview.setHasFixedSize(true);
+        recview.setLayoutManager(new LinearLayoutManager(this));
+        listfound = new ArrayList<>();
+        datalist = new ArrayList<>();
+        listcheck = new ArrayList<>();
+        adapter = new Adapter(listfound, this);
+        recview.setAdapter(adapter);
+        hashSet = new HashSet<>();
 
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        onlineRef = FirebaseDatabase.getInstance().getReference().child(".info/connected");
-        counterRef = FirebaseDatabase.getInstance().getReference("lastOnline");
-        currentRef = FirebaseDatabase.getInstance().getReference("lastOnline").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        setupSystem();
-        updateSystem();
-    }
-
-    private void updateSystem() {
-        Query personsQuery = onlineRef.orderByKey();
-        FirebaseRecyclerOptions personsOptions = new FirebaseRecyclerOptions.Builder<User>().setQuery(personsQuery, User.class).build();
-        adapter = new FirebaseRecyclerAdapter<User, Adapter>(personsOptions) {
-
-
-            @NonNull
-            @Override
-            public Adapter onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.activity_email, parent, false);
-
-                return new Adapter(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull Adapter adapter, int i, @NonNull User user) {
-                adapter.setName(user.getName());
-                adapter.setEmail(user.getEmail());
-            }
-        };
-
-    }
-
-
-    private void setupSystem() {
-        onlineRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getValue(Boolean.class)){
-                    currentRef.onDisconnect().removeValue();
-                    counterRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).
-                            setValue(new User(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                                    FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
-                adapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    counterRef.addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            for (DataSnapshot postSnapshot:snapshot.getChildren()){
-             User user=postSnapshot.getValue(User.class);
-                Log.d("LOG",""+user.getEmail()+"is"+user.getName());
-
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    });
     }
 
 
     public void Add_an_individual(View view) {
-        EditText Id = new EditText(view.getContext());
-        final AlertDialog.Builder AddEmailDialog = new AlertDialog.Builder(view.getContext());
-        AddEmailDialog.setTitle("Add an individual");
-        AddEmailDialog.setMessage("Enter the ID you want to join ");
-        AddEmailDialog.setView(Id);
-
-        AddEmailDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-            @Override
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(listEmail.this);
+        alertDialog.setTitle("Add Member");
+        alertDialog.setMessage("Enter the email of your family member ");
+        EditText input = new EditText(this);
+        alertDialog.setView(input);
+        FirebaseAuth firebaseAuth;
+        firebaseAuth = FirebaseAuth.getInstance();
+        IdUser = firebaseAuth.getCurrentUser().getUid();
+        alertDialog.setPositiveButton("ADD", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        datalist.clear();
+                        listfound.clear();
+                        String inpu = input.getText().toString();
+                        //if (inpu != null) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            datalist.add(dataSnapshot.getValue(User.class));
+                        }
 
 
+                        for (int i = 0; datalist.size() > i; i++) {
+                            if (datalist.get(i).getId().equalsIgnoreCase(inpu) && !inpu.equals(IdUser)) {
+                                listfound.add(datalist.get(i));
+                                Toast.makeText(view.getContext(), "added", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        for (int i = 0; listcheck.size() > i; i++) {
+                            for (int a = 0; listfound.size() > a; a++) {
+                                if (listcheck.get(i)==(listfound.get(a))) {
+                                    listfound.remove(listcheck.get(i));
+                                    Toast.makeText(view.getContext(), "delete", Toast.LENGTH_SHORT).show();
+                                }
+
+
+                            }
+                        }
+                        //  hashSet.addAll(listfound);
+                        //hashSet.clear();
+                        //listfound.addAll(hashSet);
+
+                        adapter.notifyDataSetChanged();
+
+                    }
+
+                    //        }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         });
-        AddEmailDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // close
-            }
-        });
-        AddEmailDialog.create().show();
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
+
+
+        alertDialog.show();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
-    }
+
 }

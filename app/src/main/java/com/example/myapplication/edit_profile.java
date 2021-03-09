@@ -1,8 +1,5 @@
 package com.example.myapplication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -91,7 +91,7 @@ public class edit_profile extends AppCompatActivity {
                         DocumentReference docRef = fStore.collection("users").document(user.getUid());
                         Map<String,Object> edited = new HashMap<>();
                         edited.put("email",email);
-                        edited.put("fName",profileFullName.getText().toString());
+                        edited.put("name",profileFullName.getText().toString());
                         edited.put("phone",profilePhone.getText().toString());
                         docRef.update(edited).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -101,7 +101,7 @@ public class edit_profile extends AppCompatActivity {
                                 finish();
                             }
                         });
-                        Toast.makeText(edit_profile.this, "Email is changed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(edit_profile.this, "changed.", Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
