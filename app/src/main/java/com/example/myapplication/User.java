@@ -8,6 +8,10 @@ public class User {
     String Id;
     String location;
 
+    public void setId(String id) {
+        Id = id;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -27,11 +31,6 @@ public class User {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
-    public void setId(String id) {
-        Id = id;
-    }
-
 
 
     public String getId() {

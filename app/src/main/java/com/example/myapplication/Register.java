@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,14 +44,18 @@ import java.util.Map;
 
 public class Register extends AppCompatActivity implements LocationListener {
     public static final String TAG = "TAG";
-    EditText mFullName, mEmail, mPassword, mPhone;
+    EditText mFullName, mEmail, mPassword, mPhone, id_fa;
     Button mRegisterBtn;
+    RadioButton childRadio, parentRadio;
     TextView mLoginBtn;
     FirebaseAuth fAuth;
     ProgressBar progressBar;
     FirebaseFirestore fStore;
-    String userID;
     LocationManager locationManager;
+    FirebaseUser firebaseUser;
+   static String userID = "2021";
+    private static long idCounter = 2021;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,27 +68,34 @@ public class Register extends AppCompatActivity implements LocationListener {
         mPhone = findViewById(R.id.phone);
         mRegisterBtn = findViewById(R.id.registerBtn);
         mLoginBtn = findViewById(R.id.createText);
-
         fAuth = FirebaseAuth.getInstance();
+        firebaseUser = fAuth.getCurrentUser();
+
         fStore = FirebaseFirestore.getInstance();
         progressBar = findViewById(R.id.progressBar);
-
+        childRadio = findViewById(R.id.radio_child);
+        parentRadio = findViewById(R.id.radio_parent);
+        id_fa = findViewById(R.id.id_Father);
         if (fAuth.getCurrentUser() != null) {
-            if (fAuth.getCurrentUser().isEmailVerified()){
-            startActivity(new Intent(Register.this, profile.class));
-            finish();}
-            else {startActivity(new Intent(Register.this, login.class));
-                finish();}
+            if (fAuth.getCurrentUser().isEmailVerified()) {
+                startActivity(new Intent(Register.this, profile.class));
+                finish();
+            } else {
+                startActivity(new Intent(Register.this, login.class));
+                finish();
+            }
         }
 
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 final String email = mEmail.getText().toString().trim();
                 String password = mPassword.getText().toString().trim();
                 final String fullName = mFullName.getText().toString();
                 final String phone = mPhone.getText().toString();
+
 
                 if (TextUtils.isEmpty(email)) {
                     mEmail.setError("Email is Required.");
@@ -123,32 +135,68 @@ public class Register extends AppCompatActivity implements LocationListener {
                                     Log.d(TAG, "onFailure: Email not sent " + e.getMessage());
                                 }
                             });
-                            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-                            String location=locationManager.toString();
-                            userID = fAuth.getCurrentUser().getUid();
-                            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                            DatabaseReference databaseReference = firebaseDatabase.getReference().child("users");
-                            Map<String, Object> user = new HashMap<>();
-                            user.put("name", fullName);
-                            user.put("email", email);
-                            user.put("phone", phone);
-                            user.put("Id", userID);
-                            user.put("location",location);
-                            databaseReference.push().setValue(user);
-                            Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
 
-                            DocumentReference documentReference = fStore.collection("users").document(userID);
-                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "onSuccess: user Profile is created for " + userID);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "onFailure: " + e.toString());
-                                }
-                            });
+                            if (id_fa.getVisibility() == View.VISIBLE) {
+                                locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+                                String location = locationManager.toString();
+
+                                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                DatabaseReference databaseReference = firebaseDatabase.getReference().child("child").child("member");
+                                Map<String, Object> user = new HashMap<>();
+                                user.put("name", fullName);
+                                user.put("email", email);
+                                user.put("phone", phone);
+                                user.put("Id", createID());
+                                user.put("location", location);
+                                databaseReference.setValue(user);
+                                Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
+
+                                DocumentReference documentReference = fStore.collection("user").document( fAuth.getCurrentUser().getUid());
+                                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "onSuccess: user Profile is created for ");
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d(TAG, "onFailure: " + e.toString());
+                                    }
+                                });
+
+
+                            } else {
+                                locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+                                String location = locationManager.toString();
+                                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent");
+                                Map<String, Object> user = new HashMap<>();
+                                user.put("name", fullName);
+                                user.put("email", email);
+                                user.put("phone", phone);
+                                user.put("Id", userID);
+                                user.put("location", location);
+                                databaseReference.push().setValue(user);
+                                Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
+
+                                DocumentReference documentReference = fStore.collection("user").document( fAuth.getCurrentUser().getUid());
+                                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "onSuccess: user Profile is created for " );
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d(TAG, "onFailure: " + e.toString());
+                                    }
+                                });
+
+                             int i=  Integer.parseInt(userID);
+                             ++i;
+                             userID=String.valueOf(i);
+
+                            }
 
 
                         } else {
@@ -220,5 +268,23 @@ public class Register extends AppCompatActivity implements LocationListener {
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    public void check_radio1(View view) {
+
+        if (childRadio.isChecked()) {
+            id_fa.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    public void check_radio2(View view) {
+        if (parentRadio.isChecked()) {
+            id_fa.setVisibility(View.INVISIBLE);
+        }
+    }
+    public static synchronized String createID()
+    {
+        return String.valueOf(idCounter++);
     }
 }
