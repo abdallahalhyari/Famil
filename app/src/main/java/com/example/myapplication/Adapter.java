@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 public class Adapter extends RecyclerView.Adapter<Adapter.myviewholder> {
     ArrayList<User> datalist;
     Context context;
+
 
     public Adapter(ArrayList<User> datalist, Context context) {
         this.datalist = datalist;
@@ -29,9 +31,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myviewholder> {
 
     @Override
     public void onBindViewHolder(@NonNull myviewholder holder, int position) {
-        holder.t1.setText(datalist.get(position).getName());
+
         holder.t2.setText(datalist.get(position).getEmail());
         holder.t3.setText(datalist.get(position).getPhone());
+        holder.t1.setText(datalist.get(position).getName());
+
     }
 
     @Override
@@ -39,14 +43,22 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myviewholder> {
         return datalist.size();
     }
 
-    class myviewholder extends RecyclerView.ViewHolder {
+    static class myviewholder extends RecyclerView.ViewHolder {
         TextView t1, t2, t3;
+        ImageView imageView_pro;
 
         public myviewholder(@NonNull View itemView) {
             super(itemView);
             t1 = itemView.findViewById(R.id.name);
             t2 = itemView.findViewById(R.id.email_text);
             t3 = itemView.findViewById(R.id.phone);
+            imageView_pro=itemView.findViewById(R.id.image_view);
         }
     }
+    private void removeItem(int position) {
+        datalist.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, datalist.size());
+    }
+
 }

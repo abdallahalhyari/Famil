@@ -17,7 +17,7 @@
             android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:src="@drawable/ic_email_black_24dp" />
+            android:src="@drawable/link" />
 
         <TextView
             android:id="@+id/name"

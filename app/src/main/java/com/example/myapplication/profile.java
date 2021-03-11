@@ -41,8 +41,8 @@ public class profile extends AppCompatActivity {
     FirebaseUser user;
     ImageView profileImage, id_image;
     StorageReference storageReference;
-    EditText id_pa;
-
+    DocumentReference documentReference;
+   static Uri image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,90 +55,64 @@ public class profile extends AppCompatActivity {
         userID = findViewById(R.id.id_number);
         profileImage = findViewById(R.id.profileImage);
         changeProfileImage = findViewById(R.id.changeProfile);
-        id_pa = findViewById(R.id.id_Father);
         addmember = findViewById(R.id.Add_member);
         id = findViewById(R.id.id);
-        id_image = findViewById(R.id.id_m);
         fAuth = FirebaseAuth.getInstance();
+        id_image = findViewById(R.id.id_m);
+        user = fAuth.getCurrentUser();
         fStore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
-        user = fAuth.getCurrentUser();
+        documentReference = fStore.collection("user").document(user.getUid());
+
+        StorageReference profileRef = storageReference.child("users/" + user.getUid() + "/profile.jpg");
+        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(profileImage);
+              image=uri;
+            }
+        });
 
 
-
-        if (user.getUid() == "") {
-            StorageReference profileRef = storageReference.child("child/" + fAuth.getCurrentUser().getUid() + "/profile.jpg");
-            profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Picasso.get().load(uri).into(profileImage);
-                }
-            });
-        } else {
-            StorageReference profileRef = storageReference.child("parent/" + fAuth.getCurrentUser().getUid() + "/profile.jpg");
-            profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Picasso.get().load(uri).into(profileImage);
-                }
-            });
-
-        }
         resendCode = findViewById(R.id.resendCode);
         verifyMsg = findViewById(R.id.verifyMsg);
 
 
-        user = fAuth.getCurrentUser();
-
         if (!user.isEmailVerified()) {
-            //verifyMsg.setVisibility(View.VISIBLE);
-            //resendCode.setVisibility(View.VISIBLE);
             Toast.makeText(this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, login.class));
             finish();
-            resendCode.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-
-                    user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(v.getContext(), "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("tag", "onFailure: Email not sent " + e.getMessage());
-                        }
-                    });
-                }
-
-            });
         }
 
-        if (user.getUid() == "") {
-            DocumentReference documentReference = fStore.collection("user").document(user.getUid());
-            documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    if (documentSnapshot.exists()) {
-                        fullName.setText(documentSnapshot.getString("location"));
-                        fullName.setText(documentSnapshot.getString("name"));
-                        email.setText(documentSnapshot.getString("email"));
-                        phone.setText(documentSnapshot.getString("phone"));
-                        userID.setText(documentSnapshot.getString(""));
-                        userID.setVisibility(View.INVISIBLE);
-                        id_image.setVisibility(View.INVISIBLE);
-                        id.setVisibility(View.INVISIBLE);
-                        addmember.setVisibility(View.VISIBLE);
-                    } else {
-                        Log.d("tag", "onEvent: Document do not exists");
-                    }
-                }
-            });
-        } else {
 
-            DocumentReference documentReference = fStore.collection("user").document(user.getUid());
+        documentReference = fStore.collection("user").document(user.getUid());
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (documentSnapshot.exists()) {
+                    fullName.setText(documentSnapshot.getString("location"));
+                    fullName.setText(documentSnapshot.getString("name"));
+                    email.setText(documentSnapshot.getString("email"));
+                    phone.setText(documentSnapshot.getString("phone"));
+                    userID.setText(documentSnapshot.getString("Id"));
+
+                    if (Integer.parseInt(userID.getText().toString()) != 1) {
+
+                        userID.setVisibility(View.VISIBLE);
+                        id_image.setVisibility(View.VISIBLE);
+                        id.setVisibility(View.VISIBLE);
+                        addmember.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    Log.d("tag", "onEvent: Document do not exists");
+                }
+
+            }
+
+        });
+         /*else {
+            Toast.makeText(this, "11111111111111111", Toast.LENGTH_SHORT).show();
+            documentReference = fStore.collection("user").document(user.getUid());
             documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -149,14 +123,13 @@ public class profile extends AppCompatActivity {
                         phone.setText(documentSnapshot.getString("phone"));
                         userID.setText(documentSnapshot.getString("Id"));
 
-
                     } else {
                         Log.d("tag", "onEvent: Document do not exists");
                     }
                 }
             });
 
-        }
+        }*/
 
 
         resetPassLocal.setOnClickListener(new View.OnClickListener() {
@@ -227,6 +200,7 @@ public class profile extends AppCompatActivity {
 
 
     public void Go_ADD(View view) {
-        startActivity(new Intent(view.getContext(), listEmail.class));
+        Intent intent = new Intent(view.getContext(), listEmail.class);
+        startActivity(intent);
     }
 }

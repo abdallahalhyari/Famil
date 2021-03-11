@@ -29,7 +29,6 @@ public class login extends AppCompatActivity {
     ProgressBar progressBar;
     FirebaseAuth fAuth;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +65,9 @@ public class login extends AppCompatActivity {
                     return;
                 }
 
-
                 progressBar.setVisibility(View.VISIBLE);
 
                 // authenticate the user
-
-
-
 
                 fAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -86,10 +81,9 @@ public class login extends AppCompatActivity {
                         }
 
                     }
-
                 });
-                }
 
+            }
         });
 
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
@@ -104,7 +98,7 @@ public class login extends AppCompatActivity {
             public void onClick(View v) {
 
                 final EditText resetMail = new EditText(v.getContext());
-                final androidx.appcompat.app.AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
+                final AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
                 passwordResetDialog.setTitle("Reset Password ?");
                 passwordResetDialog.setMessage("Enter Your Email To Received Reset Link.");
                 passwordResetDialog.setView(resetMail);
