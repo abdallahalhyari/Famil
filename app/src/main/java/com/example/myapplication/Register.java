@@ -155,6 +155,9 @@ public class Register extends AppCompatActivity implements LocationListener {
                                 });
                             }
 
+                                Toast.makeText(Register.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
+
+
 
                             if (id_fa.getVisibility() == View.VISIBLE) {
                                 DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + id_f);
@@ -354,7 +357,6 @@ public class Register extends AppCompatActivity implements LocationListener {
     }
 
     public static synchronized String createID() {
-        idCounter = idCounter + 5;
-        return String.valueOf(idCounter);
+        return String.valueOf(idCounter++);
     }
 }

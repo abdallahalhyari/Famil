@@ -78,11 +78,7 @@ public class profile extends AppCompatActivity {
         verifyMsg = findViewById(R.id.verifyMsg);
 
 
-        if (!user.isEmailVerified()) {
-            Toast.makeText(this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, login.class));
-            finish();
-        }
+
 
 
         documentReference = fStore.collection("user").document(user.getUid());
@@ -194,6 +190,7 @@ public class profile extends AppCompatActivity {
 
     public void logout(View view) {
         FirebaseAuth.getInstance().signOut();//logout
+
         startActivity(new Intent(getApplicationContext(), login.class));
         finish();
     }
