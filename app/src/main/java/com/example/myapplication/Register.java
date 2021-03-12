@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -42,7 +43,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -58,10 +58,9 @@ public class Register extends AppCompatActivity implements LocationListener {
     ProgressBar progressBar;
     FirebaseFirestore fStore;
     LocationManager locationManager;
-    ArrayList<User> datalist, listfound;
     FirebaseUser firebaseUser;
     String key = "";
-    public static String userID;
+    public String userID;
     private static long idCounter = 2021;
     String id_f;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -69,6 +68,7 @@ public class Register extends AppCompatActivity implements LocationListener {
     String email;
     String fullName;
     String phone;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,11 +91,13 @@ public class Register extends AppCompatActivity implements LocationListener {
 
         if (firebaseUser != null) {
             if (firebaseUser.isEmailVerified()) {
+                progressBar.setVisibility(View.INVISIBLE);
                 startActivity(new Intent(Register.this, profile.class));
-                finish();
+
             } else {
+                progressBar.setVisibility(View.INVISIBLE);
                 startActivity(new Intent(Register.this, login.class));
-                finish();
+
             }
         }
 
@@ -155,9 +157,6 @@ public class Register extends AppCompatActivity implements LocationListener {
                                 });
                             }
 
-                                Toast.makeText(Register.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
-
-
 
                             if (id_fa.getVisibility() == View.VISIBLE) {
                                 DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + id_f);
@@ -205,7 +204,7 @@ public class Register extends AppCompatActivity implements LocationListener {
                                         user.put("Id", "1");
                                         user.put("location", location);
                                         databaseReference.push().setValue(user);
-                                        Toast.makeText(Register.this, "User Created."+key, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Register.this, "User Created." + key, Toast.LENGTH_SHORT).show();
 
                                         DocumentReference documentReference = fStore.collection("user").document(fAuth.getCurrentUser().getUid());
                                         documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -219,6 +218,7 @@ public class Register extends AppCompatActivity implements LocationListener {
                                                 Log.d(TAG, "onFailure: " + e.toString());
                                             }
                                         });
+                                        progressBar.setVisibility(View.GONE);
                                         Intent intent = new Intent(Register.this, login.class);
                                         startActivity(intent);
                                     } else {
@@ -229,17 +229,14 @@ public class Register extends AppCompatActivity implements LocationListener {
                                 } else {
                                     Toast.makeText(Register.this, "ID Failure", Toast.LENGTH_SHORT).show();
                                     progressBar.setVisibility(View.GONE);
-                                    return;
                                 }
 
                             } else {
-
-
-                                userID = createID();
+                                userID = fuser.getUid();
                                 locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
                                 String location = locationManager.toString();
                                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                                DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + userID);
+                                DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + fuser.getUid());
                                 Map<String, Object> user = new HashMap<>();
                                 user.put("name", fullName);
                                 user.put("email", email);
@@ -262,11 +259,10 @@ public class Register extends AppCompatActivity implements LocationListener {
                                     }
                                 });
 
-
+                                progressBar.setVisibility(View.INVISIBLE);
                                 Intent intent = new Intent(Register.this, login.class);
                                 intent.putExtra("id", userID);
                                 startActivity(intent);
-
                             }
 
 
