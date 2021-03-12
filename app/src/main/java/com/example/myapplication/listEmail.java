@@ -65,7 +65,7 @@ public class listEmail extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (documentSnapshot.exists()) {
                    id=documentSnapshot.getString("Id");
-                    if (Integer.parseInt(id) != 1) {
+                    if (id != "1") {
 
                         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                         DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + id);

@@ -73,8 +73,14 @@ public class login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(login.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), profile.class));
+                            if (fAuth.getCurrentUser().isEmailVerified()){
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(login.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), profile.class));
+                            }else {  progressBar.setVisibility(View.GONE);
+                                Toast.makeText(login.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show(); }
+
+
                         } else {
                             Toast.makeText(login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
@@ -90,7 +96,7 @@ public class login extends AppCompatActivity {
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),Register.class));
+            login.super.onBackPressed();
             }
         });
 

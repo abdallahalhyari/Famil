@@ -37,7 +37,7 @@ public class profile extends AppCompatActivity {
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     Button resendCode;
-    Button resetPassLocal, changeProfileImage, addmember;
+    Button resetPassLocal, changeProfileImage, addmember,logout;
     FirebaseUser user;
     ImageView profileImage, id_image;
     StorageReference storageReference;
@@ -64,6 +64,7 @@ public class profile extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
         documentReference = fStore.collection("user").document(user.getUid());
 
+
         StorageReference profileRef = storageReference.child("users/" + user.getUid() + "/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -77,10 +78,6 @@ public class profile extends AppCompatActivity {
         resendCode = findViewById(R.id.resendCode);
         verifyMsg = findViewById(R.id.verifyMsg);
 
-
-
-
-
         documentReference = fStore.collection("user").document(user.getUid());
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -92,7 +89,7 @@ public class profile extends AppCompatActivity {
                     phone.setText(documentSnapshot.getString("phone"));
                     userID.setText(documentSnapshot.getString("Id"));
 
-                    if (Integer.parseInt(userID.getText().toString()) != 1) {
+                    if (userID.getText().toString() != "1") {
 
                         userID.setVisibility(View.VISIBLE);
                         id_image.setVisibility(View.VISIBLE);
@@ -190,9 +187,9 @@ public class profile extends AppCompatActivity {
 
     public void logout(View view) {
         FirebaseAuth.getInstance().signOut();//logout
+        super.onBackPressed();
+     //  startActivity(new Intent(getApplicationContext(), login.class));
 
-        startActivity(new Intent(getApplicationContext(), login.class));
-        finish();
     }
 
 
