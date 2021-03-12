@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
+$ANDROID_HOME/tools/bin/sdkmanager "build-tools;30.0.2"
 ##############################################################################
 ##
 ##  Gradle start up script for UN*X
