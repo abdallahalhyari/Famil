@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Family "
+            android:text="Raqib"
             android:textColor="#AF5A33"
             android:textSize="40dp"
             android:textStyle="bold" />
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text=" map"
+            android:text=" JO"
             android:textColor="#0D619F"
             android:textSize="40dp"
             android:textStyle="bold" />
