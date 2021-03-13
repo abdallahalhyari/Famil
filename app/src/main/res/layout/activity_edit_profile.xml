@@ -62,23 +62,26 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
+        android:background="@drawable/text_design1"
         android:ems="10"
+        android:hint="Phone"
+        android:inputType="phone"
+        android:padding="10dp"
         android:textColor="#FFFFFF"
         android:textColorHint="#ffffff"
-        android:inputType="phone"
-        android:hint="Phone"
-        android:background="@drawable/text_design1"
-        android:padding="10dp"
         android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/saveProfileInfo"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileEmailAddress" />
+        app:layout_constraintTop_toBottomOf="@+id/profileEmailAddress"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/saveProfileInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="460dp"
+        android:layout_marginBottom="328dp"
         android:background="@drawable/custom_button1"
         android:text="Save"
         android:textColor="#FFFFFF"
@@ -89,14 +92,13 @@
 
     <ImageView
         android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/link"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="312dp"
+        android:layout_width="356dp"
+        android:layout_height="388dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profilePhoneNo"
+        app:srcCompat="@drawable/link" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
