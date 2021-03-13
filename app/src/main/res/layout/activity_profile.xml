@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_1"
     tools:context=".profile"
     android:id="@+id/profile">
 
@@ -16,6 +17,9 @@
         android:layout_marginEnd="8dp"
         android:onClick="logout"
         android:text="Logout"
+        android:textColor="#add8e6"
+        android:textColorHighlight="#C2185B"
+        android:background="@drawable/custom_button2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -82,7 +86,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Email Not Verfied !"
-        android:textColor="#C2185B"
+        android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold"
         android:visibility="gone"
@@ -96,6 +100,10 @@
         android:layout_height="wrap_content"
         android:text="Verify Now"
         android:visibility="gone"
+        android:textColor="#add8e6"
+        android:textColorHighlight="#C2185B"
+        android:background="@drawable/custom_button2"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/verifyMsg" />
@@ -107,11 +115,16 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="Reset Password"
+        android:textColor="#add8e6"
+        android:textColorHighlight="#C2185B"
+        android:background="@drawable/custom_button2"
+
         app:layout_constraintBottom_toTopOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/changeProfile"
         app:layout_constraintVertical_bias="1.0" />
+
 
     <TextView
         android:id="@+id/textView3"
@@ -230,6 +243,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="Change Profile"
+        android:textColor="#add8e6"
+        android:textColorHighlight="#C2185B"
+        android:background="@drawable/custom_button2"
+
         app:layout_constraintBottom_toBottomOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -244,6 +261,9 @@
         android:layout_marginEnd="8dp"
         android:onClick="Go_ADD"
         android:text="Add a Family Member "
+        android:textColor="#add8e6"
+        android:textColorHighlight="#C2185B"
+        android:background="@drawable/custom_button2"
         app:layout_constraintBottom_toBottomOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
