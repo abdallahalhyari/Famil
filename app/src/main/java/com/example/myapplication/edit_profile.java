@@ -60,7 +60,7 @@ public class edit_profile extends AppCompatActivity {
         profileImageView = findViewById(R.id.profileImageView);
         saveBtn = findViewById(R.id.saveProfileInfo);
 
-        StorageReference profileRef = storageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
+        StorageReference profileRef = storageReference.child("users/"+fAuth.getCurrentUser().getEmail()+"/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -141,7 +141,7 @@ public class edit_profile extends AppCompatActivity {
 
     private void uploadImageToFirebase(Uri imageUri) {
         // uplaod image to firebase storage
-        final StorageReference fileRef = storageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
+        final StorageReference fileRef = storageReference.child("users/"+fAuth.getCurrentUser().getEmail()+"/profile.jpg");
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -149,6 +149,7 @@ public class edit_profile extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         Picasso.get().load(uri).into(profileImageView);
+                        Toast.makeText(getApplicationContext(), "Upload Image", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

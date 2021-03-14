@@ -65,12 +65,11 @@ public class profile extends AppCompatActivity {
         documentReference = fStore.collection("user").document(user.getUid());
 
 
-        StorageReference profileRef = storageReference.child("users/" + user.getUid() + "/profile.jpg");
+        StorageReference profileRef = storageReference.child("users/" + user.getEmail() + "/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 Picasso.get().load(uri).into(profileImage);
-              image=uri;
             }
         });
 
@@ -89,7 +88,7 @@ public class profile extends AppCompatActivity {
                     phone.setText(documentSnapshot.getString("phone"));
                     userID.setText(documentSnapshot.getString("Id"));
 
-                    if (userID.getText().toString() != "1") {
+                    if (!userID.getText().toString().equals("1")) {
 
                         userID.setVisibility(View.VISIBLE);
                         id_image.setVisibility(View.VISIBLE);
