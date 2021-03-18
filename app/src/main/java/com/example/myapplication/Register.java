@@ -2,15 +2,15 @@ package com.example.myapplication;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -23,10 +23,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,13 +47,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
-public class Register extends AppCompatActivity implements LocationListener {
+public class Register extends AppCompatActivity {
     public static final String TAG = "TAG";
     EditText mFullName, mEmail, mPassword, mPhone, id_fa;
     Button mRegisterBtn;
@@ -59,8 +64,10 @@ public class Register extends AppCompatActivity implements LocationListener {
     FirebaseFirestore fStore;
     LocationManager locationManager;
     FirebaseUser firebaseUser;
+    private boolean mLocationPermissionGranted = false;
     String key = "";
     public String userID;
+    int PERMISSION_ID = 44;
     private static long idCounter = 2021;
     String id_f;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -68,8 +75,14 @@ public class Register extends AppCompatActivity implements LocationListener {
     String email;
     String fullName;
     String phone;
-    SharedPreferences sharedPreferences;
+    DocumentReference documentReference;
+    DatabaseReference databaseReference;
+    Location currentLocation;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private UserLocation mUserLocation;
+    GeoPoint geoPoint;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +100,9 @@ public class Register extends AppCompatActivity implements LocationListener {
         childRadio = findViewById(R.id.radio_child);
         parentRadio = findViewById(R.id.radio_parent);
         id_fa = findViewById(R.id.id_Father);
+        mUserLocation = new UserLocation();
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if (firebaseUser != null) {
             if (firebaseUser.isEmailVerified()) {
@@ -100,7 +115,7 @@ public class Register extends AppCompatActivity implements LocationListener {
 
             }
         }
-
+        getLastLocation();
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,6 +174,7 @@ public class Register extends AppCompatActivity implements LocationListener {
 
 
                             if (id_fa.getVisibility() == View.VISIBLE) {
+
                                 DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + id_f);
                                 final Query userQuery = databaseReference.orderByChild(id_f);
 
@@ -167,6 +183,7 @@ public class Register extends AppCompatActivity implements LocationListener {
                                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
                                         for (DataSnapshot child : dataSnapshot.getChildren()) {
                                             key = child.getKey();
+
                                         }
                                     }
 
@@ -193,17 +210,36 @@ public class Register extends AppCompatActivity implements LocationListener {
                                 if (key != null) {
 
                                     if (fuser != null) {
-                                        locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-                                        String location = locationManager.toString();
-                                        Toast.makeText(Register.this, key, Toast.LENGTH_SHORT).show();
 
+                                        if (ActivityCompat.checkSelfPermission(Register.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                            return;
+                                        }
+                                        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Location> task) {
+                                                if (task.isSuccessful()) {
+                                                    Location location = task.getResult();
+                                                    currentLocation = location;
+                                                    //         Toast.makeText(getApplicationContext(), currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                                                    GeoPoint geoPoint = new GeoPoint(Objects.requireNonNull(location).getLatitude(), location.getLongitude());
+                                                    mUserLocation.setGeo_point(geoPoint);
+                                                    mUserLocation.setTimestamp(null);
+
+
+                                                }
+                                            }
+                                        });
+                                        String string1 = String.valueOf(geoPoint.getLatitude());
+                                        String string2 = String.valueOf(geoPoint.getLongitude());
+                                        Toast.makeText(Register.this, key, Toast.LENGTH_SHORT).show();
                                         Map<String, Object> user = new HashMap<>();
                                         user.put("name", fullName);
                                         user.put("email", email);
                                         user.put("phone", phone);
                                         user.put("Id", "1");
-                                        user.put("location", location);
-                                        databaseReference.push().setValue(user);
+                                        user.put("locationla", string1);
+                                        user.put("locationlo", string2);
+                                        databaseReference.child(fuser.getUid()).setValue(user);
                                         Toast.makeText(Register.this, "User Created." + key, Toast.LENGTH_SHORT).show();
 
                                         DocumentReference documentReference = fStore.collection("user").document(fAuth.getCurrentUser().getUid());
@@ -232,9 +268,28 @@ public class Register extends AppCompatActivity implements LocationListener {
                                 }
 
                             } else {
+
+                                if (ActivityCompat.checkSelfPermission(Register.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    return;
+                                }
+                                mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Location> task) {
+                                        if (task.isSuccessful()) {
+                                            Location location = task.getResult();
+                                            currentLocation = location;
+                                            //         Toast.makeText(getApplicationContext(), currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                                            GeoPoint geoPoint = new GeoPoint(Objects.requireNonNull(location).getLatitude(), location.getLongitude());
+                                            mUserLocation.setGeo_point(geoPoint);
+                                            mUserLocation.setTimestamp(null);
+
+
+                                        }
+                                    }
+                                });
                                 userID = fuser.getUid();
-                                locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-                                String location = locationManager.toString();
+                                String string1 = String.valueOf(geoPoint.getLatitude());
+                                String string2 = String.valueOf(geoPoint.getLongitude());
                                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                                 DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + fuser.getUid());
                                 Map<String, Object> user = new HashMap<>();
@@ -242,8 +297,9 @@ public class Register extends AppCompatActivity implements LocationListener {
                                 user.put("email", email);
                                 user.put("phone", phone);
                                 user.put("Id", userID);
-                                user.put("location", location);
-                                databaseReference.push().setValue(user);
+                                user.put("locationla", string1);
+                                user.put("locationlo",string2);
+                                databaseReference.child(fuser.getUid()).setValue(user);
                                 Toast.makeText(Register.this, "User Created.", Toast.LENGTH_SHORT).show();
 
                                 DocumentReference documentReference = fStore.collection("user").document(fAuth.getCurrentUser().getUid());
@@ -286,54 +342,9 @@ public class Register extends AppCompatActivity implements LocationListener {
             }
         });
 
-        if (ContextCompat.checkSelfPermission(Register.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(Register.this, new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION}, 100);
-        }
-        getlocation();
-    }
-
-    @SuppressLint("MissingPermission")
-    private void getlocation() {
-        try {
-            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, Register.this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(Register.this, "" + location.getLatitude() + "," + location.getLongitude(), Toast.LENGTH_SHORT).show();
-        try {
-            Geocoder geocoder = new Geocoder(Register.this, Locale.getDefault());
-            List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            String address = addressList.get(0).getAddressLine(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
 
-    @Override
-    public void onProviderEnabled(@NonNull String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(@NonNull String provider) {
-
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
 
     public void check_radio1(View view) {
 
@@ -349,6 +360,117 @@ public class Register extends AppCompatActivity implements LocationListener {
         if (parentRadio.isChecked()) {
             id_fa.setVisibility(View.INVISIBLE);
 
+        }
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @SuppressLint("MissingPermission")
+    private void getLastLocation() {
+        // check if permissions are given
+        if (checkPermissions()) {
+
+            // check if location is enabled
+            if (isLocationEnabled()) {
+
+                // getting last
+                // location from
+                // FusedLocationClient
+                // object
+                mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        Location location = task.getResult();
+                        if (location == null) {
+                            requestNewLocationData();
+                        } else {
+                            geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                        }
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Please turn on" + " your location...", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        } else {
+            // if permissions aren't available,
+            // request for permissions
+            requestPermissions();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void requestNewLocationData() {
+
+        // Initializing LocationRequest
+        // object with appropriate methods
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        // setting LocationRequest
+        // on FusedLocationClient
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+    }
+
+    private LocationCallback mLocationCallback = new LocationCallback() {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location mLastLocation = locationResult.getLastLocation();
+            geoPoint = new GeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        }
+    };
+
+    // method to check for permissions
+    private boolean checkPermissions() {
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        // If we want background location
+        // on Android 10.0 and higher,
+        // use:
+        // ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    // method to request for permissions
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ID);
+    }
+
+    // method to check
+    // if location is enabled
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    // If everything is alright then
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void
+    onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastLocation();
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (checkPermissions()) {
+            getLastLocation();
         }
     }
 

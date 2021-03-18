@@ -82,7 +82,6 @@ public class profile extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (documentSnapshot.exists()) {
-                    fullName.setText(documentSnapshot.getString("location"));
                     fullName.setText(documentSnapshot.getString("name"));
                     email.setText(documentSnapshot.getString("email"));
                     phone.setText(documentSnapshot.getString("phone"));
@@ -185,8 +184,8 @@ public class profile extends AppCompatActivity {
 
 
     public void logout(View view) {
-        FirebaseAuth.getInstance().signOut();//logout
-        super.onBackPressed();
+        Intent intent = new Intent(view.getContext(), MapsActivity.class);
+        startActivity(intent);
      //  startActivity(new Intent(getApplicationContext(), login.class));
 
     }
