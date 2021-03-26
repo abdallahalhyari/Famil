@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -66,12 +67,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String name;
     SharedPreferences sharedPreferences;
     FirebaseDatabase firebaseDatabase;
-    GeoPoint geoPoint;
+   static GeoPoint geoPoint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mDb = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
@@ -143,15 +145,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             ida = dataList.get(i).getLocationla();
                             ido = dataList.get(i).getLocationlo();
                             name = dataList.get(i).getName();
-                            if (id==("parent" + id2)) {
+                        /*    if (id.equals("parent" + id2)) {
                                 LatLng sydney = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
                                 mMap.addMarker(new MarkerOptions().position(sydney).title("My Location" + geoPoint.getLatitude() + "  " + geoPoint.getLongitude()));
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                            } if (id!=("parent" + id2)){
-
-                                LatLng sydney = new LatLng(Double.parseDouble(ida), Double.parseDouble(ido));
-                                mMap.addMarker(new MarkerOptions().position(sydney).title(name));
                             }
+                            if (!id.equals("parent" + id2)){
+
+                            }*/
+                            LatLng sydney = new LatLng(Double.parseDouble(ida), Double.parseDouble(ido));
+                            mMap.addMarker(new MarkerOptions().position(sydney).title(name));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
                         }
                     }
 
@@ -190,8 +194,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onLocationResult(LocationResult locationResult) {
             Location mLastLocation = locationResult.getLastLocation();
             geoPoint = new GeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            firebaseDatabase.getReference().child(id).child(id2).child("locationla").setValue(String.valueOf(mLastLocation.getLatitude()));
-            firebaseDatabase.getReference().child(id).child(id2).child("locationlo").setValue(String.valueOf(mLastLocation.getLongitude()));
+            if (fAuth.getCurrentUser()!=null){
+                firebaseDatabase.getReference().child(id).child(id2).child("locationla").setValue(String.valueOf(mLastLocation.getLatitude()));
+                firebaseDatabase.getReference().child(id).child(id2).child("locationlo").setValue(String.valueOf(mLastLocation.getLongitude()));
+            }
+
         }
     };
 
