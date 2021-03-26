@@ -1,28 +1,42 @@
 package com.example.myapplication;
 
 
-import com.google.firebase.firestore.GeoPoint;
-
 public class User {
     String Email;
     String name;
     String phone;
     String Id;
-    private GeoPoint geo_point;
+    String locationlo;
+    String locationla;
+    String id_family;
 
+    public String getId_family() {
+        return id_family;
+    }
+
+    public void setId_family(String id_family) {
+        this.id_family = id_family;
+    }
 
     public void setId(String id) {
         Id = id;
     }
 
-    public GeoPoint getGeo_point() {
-        return geo_point;
+    public String getLocationlo() {
+        return locationlo;
     }
 
-    public void setGeo_point(GeoPoint geo_point) {
-        this.geo_point = geo_point;
+    public void setLocationlo(String locationlo) {
+        this.locationlo = locationlo;
     }
 
+    public String getLocationla() {
+        return locationla;
+    }
+
+    public void setLocationla(String locationla) {
+        this.locationla = locationla;
+    }
 
     public void setEmail(String email) {
         Email = email;
