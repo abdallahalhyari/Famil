@@ -1,13 +1,14 @@
 package com.example.myapplication;
 
 import android.Manifest;
-import android.content.SharedPreferences;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
-import android.view.WindowManager;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,45 +39,34 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private Set<String> mChatroomIds = new HashSet<>();
-    private ListenerRegistration mChatroomEventListener;
-    private FirebaseFirestore mDb;
-    private boolean mLocationPermissionGranted = false;
     private FusedLocationProviderClient mFusedLocationClient;
     private GoogleMap mMap;
-    private static final String TAG = "MainActivity";
     FirebaseAuth fAuth;
-    User user;
-    int i;
+    int i, i1 = 0;
     LocationManager locationManager;
     ArrayList<User> dataList;
     ArrayList<String> listlocation;
-    GeoPoint currentLocation;
     DatabaseReference databaseReference;
     DocumentReference documentReference;
     FirebaseFirestore fStore;
     String ido;
     String ida;
-    String id, id2;
+    String id, id2, parentid;
     String name;
-    SharedPreferences sharedPreferences;
     FirebaseDatabase firebaseDatabase;
-   static GeoPoint geoPoint;
+    static GeoPoint geoPoint;
 
+    BroadcastReceiver br;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mDb = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -83,12 +74,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         dataList = new ArrayList<>();
         listlocation = new ArrayList<>();
+        br = new background_process();
 
+       /* IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        this.registerReceiver(br, filter);*/
         firebaseDatabase = FirebaseDatabase.getInstance();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         mythread mythrea = new mythread();
         mythrea.start();
+        BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_home);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.navigation_home:
+                        return true;
+                    case R.id.navigation_notifications:
+                        startActivity(new Intent(getApplicationContext(),listEmail.class));
+                        overridePendingTransition(0,0);
 
+                        return true;
+                    case R.id.navigation_dashboard:
+                        startActivity(new Intent(getApplicationContext(),profile.class));
+                        overridePendingTransition(0,0);
+
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     class mythread extends Thread {
@@ -100,7 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         @Override
                         public void run() {
                             mMap.clear();
-                            requestNewLocationData();
+                           requestNewLocationData();
                             getlocaiondatabase();
                         }
                     });
@@ -116,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     }
 
     public void getlocaiondatabase() {
@@ -128,7 +144,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (value.exists()) {
                     id = value.getString("parentid");
-
                 }
 
                 databaseReference = firebaseDatabase.getReference().child(id);
@@ -144,18 +159,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         for (i = 0; i < dataList.size(); i++) {
                             ida = dataList.get(i).getLocationla();
                             ido = dataList.get(i).getLocationlo();
+                            parentid = dataList.get(i).getId();
                             name = dataList.get(i).getName();
-                        /*    if (id.equals("parent" + id2)) {
-                                LatLng sydney = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
-                                mMap.addMarker(new MarkerOptions().position(sydney).title("My Location" + geoPoint.getLatitude() + "  " + geoPoint.getLongitude()));
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                            }
-                            if (!id.equals("parent" + id2)){
 
-                            }*/
                             LatLng sydney = new LatLng(Double.parseDouble(ida), Double.parseDouble(ido));
                             mMap.addMarker(new MarkerOptions().position(sydney).title(name));
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                            if (i1 == 0) {
+                                i1 = 1;
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+                            }
                         }
                     }
 
@@ -194,7 +206,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onLocationResult(LocationResult locationResult) {
             Location mLastLocation = locationResult.getLastLocation();
             geoPoint = new GeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            if (fAuth.getCurrentUser()!=null){
+            if (fAuth.getCurrentUser() != null) {
                 firebaseDatabase.getReference().child(id).child(id2).child("locationla").setValue(String.valueOf(mLastLocation.getLatitude()));
                 firebaseDatabase.getReference().child(id).child(id2).child("locationlo").setValue(String.valueOf(mLastLocation.getLongitude()));
             }

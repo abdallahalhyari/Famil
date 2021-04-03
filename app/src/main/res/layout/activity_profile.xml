@@ -13,18 +13,16 @@
         android:id="@+id/logout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="68dp"
+        android:background="@drawable/custom_button2"
         android:onClick="logout"
         android:text="Logout"
         android:textColor="#add8e6"
         android:textColorHighlight="#C2185B"
-        android:background="@drawable/custom_button2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resetPasswordLocal" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/profileImage"
@@ -32,9 +30,10 @@
         android:layout_height="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.13999999"
+        app:layout_constraintVertical_bias="0.068"
         app:srcCompat="@drawable/ic_person_black_24dp" />
 
     <TextView
@@ -108,23 +107,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/verifyMsg" />
 
+
     <Button
         android:id="@+id/resetPasswordLocal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/custom_button2"
         android:text="Reset Password"
         android:textColor="#add8e6"
         android:textColorHighlight="#C2185B"
-        android:background="@drawable/custom_button2"
 
         app:layout_constraintBottom_toTopOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/changeProfile"
-        app:layout_constraintVertical_bias="1.0" />
-
+        app:layout_constraintVertical_bias="0.534" />
 
     <TextView
         android:id="@+id/textView3"
@@ -194,14 +194,14 @@
         android:id="@+id/id_m"
         android:layout_width="20dp"
         android:layout_height="25dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileImage"
-        app:layout_constraintVertical_bias="0.476"
-        app:srcCompat="@drawable/id"
-        android:visibility="gone"/>
+        app:layout_constraintVertical_bias="0.441"
+        app:srcCompat="@drawable/id" />
 
     <TextView
         android:id="@+id/id"
@@ -209,32 +209,32 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="464dp"
         android:text="Id Number"
-        app:layout_constraintBottom_toTopOf="@+id/id_number"
+        android:visibility="gone"
 
+        app:layout_constraintBottom_toTopOf="@+id/id_number"
         app:layout_constraintEnd_toEndOf="parent"
-         android:visibility="gone"
-        app:layout_constraintHorizontal_bias="0.159"
+        app:layout_constraintHorizontal_bias="0.139"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/verifyMsg"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.638"
         tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/id_number"
         android:layout_width="394dp"
         android:layout_height="26dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="92dp"
         android:layout_marginBottom="15dp"
         android:text="yyugyvgy7898"
         android:textIsSelectable="true"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/Add_member"
         app:layout_constraintStart_toEndOf="@+id/id_m"
         app:layout_constraintTop_toBottomOf="@+id/profilePhone"
-        app:layout_constraintVertical_bias="0.808"
-        tools:ignore="MissingConstraints"
-        android:visibility="gone"/>
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/changeProfile"
@@ -242,16 +242,17 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/custom_button2"
         android:text="Change Profile"
         android:textColor="#add8e6"
         android:textColorHighlight="#C2185B"
-        android:background="@drawable/custom_button2"
 
         app:layout_constraintBottom_toBottomOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePhone"
-        app:layout_constraintVertical_bias="0.59000003" />
+        app:layout_constraintVertical_bias="0.461" />
 
     <Button
         android:id="@+id/Add_member"
@@ -259,16 +260,35 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/custom_button2"
         android:onClick="Go_ADD"
         android:text="Add a Family Member "
         android:textColor="#add8e6"
         android:textColorHighlight="#C2185B"
-        android:background="@drawable/custom_button2"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePhone"
-        app:layout_constraintVertical_bias="0.379"
-        android:visibility="gone"/>
+        app:layout_constraintVertical_bias="0.181" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/windowBackground"
+        app:itemBackground="@color/design_default_color_on_secondary"
+        app:itemIconTint="@color/design_default_color_menu"
+        app:itemTextColor="@color/design_default_color_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logout"
+        app:layout_constraintVertical_bias="1.0"
+        app:menu="@menu/bottom_nav_menu"
+        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>
