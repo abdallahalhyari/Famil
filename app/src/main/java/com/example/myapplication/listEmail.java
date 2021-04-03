@@ -42,9 +42,9 @@ public class listEmail extends AppCompatActivity {
     FirebaseAuth fAuth;
     FirebaseUser user;
     DocumentReference documentReference;
-    String id,ID;
+    String id, ID;
     int i = 0;
-
+    Intent intent;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,26 +57,32 @@ public class listEmail extends AppCompatActivity {
         listcheck = new ArrayList<>();
         adapter = new Adapter(datalist, this);
         recview.setAdapter(adapter);
-        fAuth=FirebaseAuth.getInstance();
+        fAuth = FirebaseAuth.getInstance();
         hashSet = new HashSet<>();
         fStore = FirebaseFirestore.getInstance();
-        ID= Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
+        ID = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
-        BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.navigation_notifications);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.navigation_home:
-                        startActivity(new Intent(getApplicationContext(),MapsActivity.class));
-                        overridePendingTransition(0,0);
+                        intent=new Intent(getApplicationContext(), MapsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                        overridePendingTransition(0, 0);
                         return true;
                     case R.id.navigation_notifications:
                         return true;
                     case R.id.navigation_dashboard:
-                        startActivity(new Intent(getApplicationContext(),profile.class));
-                        overridePendingTransition(0,0);
+                        intent=new Intent(getApplicationContext(), profile.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+
                         return true;
                 }
                 return false;
@@ -88,7 +94,7 @@ public class listEmail extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (documentSnapshot.exists()) {
-                   id=documentSnapshot.getString("Id");
+                    id = documentSnapshot.getString("Id");
                     if (id != "1") {
 
                         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -128,7 +134,6 @@ public class listEmail extends AppCompatActivity {
             }
 
         });
-
 
 
     }

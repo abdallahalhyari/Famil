@@ -59,8 +59,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String name;
     FirebaseDatabase firebaseDatabase;
     static GeoPoint geoPoint;
-
+    Intent intent;
     BroadcastReceiver br;
+    Boolean therad=false;
+    mythread mythrea;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,47 +83,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         this.registerReceiver(br, filter);*/
         firebaseDatabase = FirebaseDatabase.getInstance();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mythread mythrea = new mythread();
-        mythrea.start();
-        BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.navigation_home);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.navigation_home:
                         return true;
                     case R.id.navigation_notifications:
-                        startActivity(new Intent(getApplicationContext(),listEmail.class));
-                        overridePendingTransition(0,0);
-
+                        therad=true;
+                        intent = new Intent(getApplicationContext(), listEmail.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
                         return true;
                     case R.id.navigation_dashboard:
-                        startActivity(new Intent(getApplicationContext(),profile.class));
-                        overridePendingTransition(0,0);
-
+                       therad=true;
+                        intent = new Intent(getApplicationContext(), profile.class);
+                       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
                         return true;
                 }
                 return false;
             }
         });
+        mythrea = new mythread();
+        mythrea.start();
     }
 
     class mythread extends Thread {
         @Override
         public void run() {
-            while (true) {
-                try {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mMap.clear();
-                           requestNewLocationData();
-                            getlocaiondatabase();
-                        }
-                    });
+            while (true ) {
 
-                    Thread.sleep(6000);
+                try {
+                    if (therad==false) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mMap.clear();
+                                requestNewLocationData();
+                                getlocaiondatabase();
+                            }
+                        });
+
+                        Thread.sleep(6000);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

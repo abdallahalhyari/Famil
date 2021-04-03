@@ -45,7 +45,7 @@ public class profile extends AppCompatActivity {
     StorageReference storageReference;
     DocumentReference documentReference;
    static Uri image;
-
+Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,12 +72,17 @@ public class profile extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.navigation_home:
-                        startActivity(new Intent(getApplicationContext(),MapsActivity.class));
-                        overridePendingTransition(0,0);
+                        intent=new Intent(getApplicationContext(), MapsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
                         return true;
                     case R.id.navigation_notifications:
-                        startActivity(new Intent(getApplicationContext(),listEmail.class));
-                        overridePendingTransition(0,0);
+                        intent=new Intent(getApplicationContext(), listEmail.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+
 
                         return true;
                     case R.id.navigation_dashboard:
