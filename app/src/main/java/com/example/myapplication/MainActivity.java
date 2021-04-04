@@ -1,18 +1,15 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+    BroadcastReceiver br;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,13 +18,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
         Thread thread1 = new Thread() {
             @Override
             public void run() {
                 try {
                     sleep(6000);
-                    Intent intent=new Intent(MainActivity.this,Register.class);
+                    Intent intent = new Intent(MainActivity.this, Register.class);
                     startActivity(intent);
                     finish();
                     super.run();
@@ -40,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
 
 
 }
