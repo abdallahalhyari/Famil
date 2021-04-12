@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_1"
+    android:background="#79CAEA"
     tools:context=".profile"
-    android:id="@+id/profile">
+    android:id="@+id/profile"
+    >
 
 
     <Button
@@ -14,9 +15,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="68dp"
-        android:background="@drawable/custom_button2"
+        android:background="@drawable/custom_button1"
         android:onClick="logout"
         android:text="Logout"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:textColor="#add8e6"
         android:textColorHighlight="#C2185B"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -114,11 +117,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/custom_button2"
+        android:background="@drawable/custom_button1"
         android:text="Reset Password"
         android:textColor="#add8e6"
         android:textColorHighlight="#C2185B"
-
         app:layout_constraintBottom_toTopOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -242,11 +244,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/custom_button2"
+        android:background="@drawable/custom_button1"
         android:text="Change Profile"
         android:textColor="#add8e6"
         android:textColorHighlight="#C2185B"
-
         app:layout_constraintBottom_toBottomOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -260,7 +261,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/custom_button2"
+        android:background="@drawable/custom_button1"
         android:onClick="Go_ADD"
         android:text="Add a Family Member "
         android:textColor="#add8e6"
@@ -273,22 +274,5 @@
         app:layout_constraintTop_toBottomOf="@+id/profilePhone"
         app:layout_constraintVertical_bias="0.181" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/windowBackground"
-        app:itemBackground="@color/design_default_color_on_secondary"
-        app:itemIconTint="@color/design_default_color_menu"
-        app:itemTextColor="@color/design_default_color_menu"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logout"
-        app:layout_constraintVertical_bias="1.0"
-        app:menu="@menu/bottom_nav_menu"
-        tools:ignore="MissingConstraints" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

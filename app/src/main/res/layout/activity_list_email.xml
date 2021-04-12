@@ -23,9 +23,11 @@
         app:menu="@menu/bottom_nav_menu"
         android:background="?android:attr/windowBackground"
         android:layout_alignParentBottom="true"
-        app:itemBackground="@color/design_default_color_on_secondary"
+        tools:ignore="ObsoleteLayoutParam"
+        app:itemBackground="@android:color/holo_blue_dark"
         app:itemTextColor="@color/design_default_color_menu"
-        app:itemIconTint="@color/design_default_color_menu"/>
+        app:itemIconTint="@color/design_default_color_menu"
+        />
 
 
 </RelativeLayout>

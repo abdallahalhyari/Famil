@@ -72,15 +72,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.Maps);
         mapFragment.getMapAsync(this);
         dataList = new ArrayList<>();
         listlocation = new ArrayList<>();
         br = new background_process();
-
-       /* IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-        this.registerReceiver(br, filter);*/
+    //    Intent filter = new Intent(this,background_process.class);
+      //  this.sendBroadcast(filter);
         firebaseDatabase = FirebaseDatabase.getInstance();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -100,8 +98,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         return true;
                     case R.id.navigation_dashboard:
                        therad=true;
-                        intent = new Intent(getApplicationContext(), profile.class);
-                       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent = new Intent(getApplicationContext(), ChatRoom.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
                         return true;
@@ -110,7 +108,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
         mythrea = new mythread();
-        mythrea.start();
+       mythrea.start();
     }
 
     class mythread extends Thread {
@@ -187,6 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         });
+
 
     }
 

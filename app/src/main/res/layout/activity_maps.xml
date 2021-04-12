@@ -6,7 +6,7 @@
     tools:context=".MapsActivity"  android:layout_height="match_parent"
     android:layout_width="match_parent">
 <fragment
-    android:id="@+id/map"
+    android:id="@+id/Maps"
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,7 +20,7 @@
         android:background="?android:attr/windowBackground"
         android:layout_alignParentBottom="true"
         tools:ignore="ObsoleteLayoutParam"
-        app:itemBackground="@color/design_default_color_on_secondary"
+        app:itemBackground="@android:color/holo_blue_dark"
         app:itemTextColor="@color/design_default_color_menu"
         app:itemIconTint="@color/design_default_color_menu"/>
 

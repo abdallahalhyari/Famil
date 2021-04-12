@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,12 +41,13 @@ public class edit_profile extends AppCompatActivity {
     FirebaseFirestore fStore;
     FirebaseUser user;
     StorageReference storageReference;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-
+        progressBar = findViewById(R.id.progressBar);
         Intent data = getIntent();
         final String fullName = data.getStringExtra("fullName");
         String email = data.getStringExtra("email");
@@ -79,11 +83,18 @@ public class edit_profile extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (TextUtils.isEmpty(profileEmail.getText().toString())) {
+                    Toast.makeText(edit_profile.this, "One or Many fields are empty.", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(profileEmail.getText().toString()).matches()) {
+                    Toast.makeText(edit_profile.this, "Email Failure", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(profileFullName.getText().toString().isEmpty() || profileEmail.getText().toString().isEmpty() || profilePhone.getText().toString().isEmpty()){
                     Toast.makeText(edit_profile.this, "One or Many fields are empty.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                progressBar.setVisibility(View.VISIBLE);
                 final String email = profileEmail.getText().toString();
                 user.updateEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -101,12 +112,15 @@ public class edit_profile extends AppCompatActivity {
                                 finish();
                             }
                         });
-                        Toast.makeText(edit_profile.this, "changed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(edit_profile.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                        onBackPressed();
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(edit_profile.this,   e.getMessage(), Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
 

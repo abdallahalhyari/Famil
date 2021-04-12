@@ -66,6 +66,10 @@ dependencies {
     implementation 'me.spark:submitbutton:1.0.1'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:28.0.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+   implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:1.0.1'
+    implementation "com.airbnb.android:lottie:3.7.0"
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'

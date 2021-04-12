@@ -76,7 +76,7 @@ public class login extends AppCompatActivity {
                             if (fAuth.getCurrentUser().isEmailVerified()){
                                 progressBar.setVisibility(View.GONE);
                                 Toast.makeText(login.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), profile.class));
+                                    startActivity(new Intent(getApplicationContext(), MapsActivity.class));
                             }else {  progressBar.setVisibility(View.GONE);
                                 Toast.makeText(login.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show(); }
 
@@ -96,7 +96,7 @@ public class login extends AppCompatActivity {
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            login.super.onBackPressed();
+               onBackPressed();
             }
         });
 

@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,7 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,38 +33,49 @@ import com.squareup.picasso.Picasso;
 
 import javax.annotation.Nullable;
 
-public class profile extends AppCompatActivity {
+public class profile_fra extends Fragment {
     private static final int GALLERY_INTENT_CODE = 1023;
     TextView fullName, email, phone, verifyMsg, userID, id;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     Button resendCode;
-    Button resetPassLocal, changeProfileImage, addmember,logout;
+    Button resetPassLocal, changeProfileImage, addmember,logout,member;
     FirebaseUser user;
     ImageView profileImage, id_image;
     StorageReference storageReference;
     DocumentReference documentReference;
-   static Uri image;
-Intent intent;
+    static Uri image;
+    Intent intent;
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+    private String mParam1;
+    private String mParam2;
+
+    public profile_fra() {
+        // Required empty public constructor
+    }
+
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
-        phone = findViewById(R.id.profilePhone);
-        fullName = findViewById(R.id.profileName);
-        email = findViewById(R.id.profileEmail);
-        resetPassLocal = findViewById(R.id.resetPasswordLocal);
-        userID = findViewById(R.id.id_number);
-        profileImage = findViewById(R.id.profileImage);
-        changeProfileImage = findViewById(R.id.changeProfile);
-        addmember = findViewById(R.id.Add_member);
-        id = findViewById(R.id.id);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_profile_fra, container, false);
+        phone = v.findViewById(R.id.profilePhone);
+        fullName =v.findViewById(R.id.profileName);
+        email = v.findViewById(R.id.profileEmail);
+        resetPassLocal = v.findViewById(R.id.resetPasswordLocal);
+        userID =v. findViewById(R.id.id_number);
+        profileImage =v. findViewById(R.id.profileImage);
+        changeProfileImage =v. findViewById(R.id.changeProfile);
+        addmember =v. findViewById(R.id.Add_member);
+        id = v.findViewById(R.id.id);
+        member=v.findViewById(R.id.Add_member);
+        logout=v.findViewById(R.id.logout);
         fAuth = FirebaseAuth.getInstance();
-        id_image = findViewById(R.id.id_m);
+        id_image =v. findViewById(R.id.id_m);
         user = fAuth.getCurrentUser();
         fStore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
-        documentReference = fStore.collection("user").document(user.getUid());
 
 
         StorageReference profileRef = storageReference.child("users/" + user.getEmail() + "/profile.jpg");
@@ -74,11 +87,11 @@ Intent intent;
         });
 
 
-        resendCode = findViewById(R.id.resendCode);
-        verifyMsg = findViewById(R.id.verifyMsg);
+        resendCode =v. findViewById(R.id.resendCode);
+        verifyMsg =v. findViewById(R.id.verifyMsg);
 
         documentReference = fStore.collection("user").document(user.getUid());
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+        documentReference.addSnapshotListener(getActivity(), new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (documentSnapshot.exists()) {
@@ -101,28 +114,6 @@ Intent intent;
             }
 
         });
-         /*else {
-            Toast.makeText(this, "11111111111111111", Toast.LENGTH_SHORT).show();
-            documentReference = fStore.collection("user").document(user.getUid());
-            documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    if (documentSnapshot.exists()) {
-                        fullName.setText(documentSnapshot.getString("location"));
-                        fullName.setText(documentSnapshot.getString("name"));
-                        email.setText(documentSnapshot.getString("email"));
-                        phone.setText(documentSnapshot.getString("phone"));
-                        userID.setText(documentSnapshot.getString("Id"));
-
-                    } else {
-                        Log.d("tag", "onEvent: Document do not exists");
-                    }
-                }
-            });
-
-        }*/
-
-
         resetPassLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,12 +133,12 @@ Intent intent;
                         user.updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(profile.this, "Password Reset Successfully.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Password Reset Successfully.", Toast.LENGTH_SHORT).show();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(profile.this, "Password Reset Failed.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Password Reset Failed.", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -174,28 +165,30 @@ Intent intent;
                 i.putExtra("email", email.getText().toString());
                 i.putExtra("phone", phone.getText().toString());
                 startActivity(i);
-
-
             }
         });
-
-
+    logout.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(v.getContext(), Register.class);
+            fAuth.signOut();
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
+    });
+        member.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), Register.class);
+                fAuth.signOut();
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
+        return v;
     }
 
 
-    public void logout(View view) {
-        Intent intent = new Intent(view.getContext(), ChatRoom.class);
-        startActivity(intent);
-     /*   Intent intent = new Intent(view.getContext(), Register.class);
-        fAuth.signOut();
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-*/
-    }
 
 
-    public void Go_ADD(View view) {
-        Intent intent = new Intent(view.getContext(), listEmail.class);
-        startActivity(intent);
-    }
 }

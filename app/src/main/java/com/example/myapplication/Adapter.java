@@ -21,18 +21,29 @@ import java.util.ArrayList;
 public class Adapter extends RecyclerView.Adapter<Adapter.myviewholder> {
     ArrayList<User> datalist;
     Context context;
+    private OnItemClickListener mListener;
 
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+        void onDeleteClick(int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
 
     public Adapter(ArrayList<User> datalist, Context context) {
         this.datalist = datalist;
         this.context = context;
     }
 
+
+
     @NonNull
     @Override
     public myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.activity_email, parent, false);
-        return new myviewholder(view);
+        myviewholder evh = new myviewholder(view, mListener);
+        return evh;
     }
 
     @Override
@@ -50,6 +61,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myviewholder> {
                 Picasso.get().load(uri).fit().centerCrop().into(holder.profileImage);
             }
         });
+
     }
 
 
@@ -60,14 +72,27 @@ public class Adapter extends RecyclerView.Adapter<Adapter.myviewholder> {
 
     static class myviewholder extends RecyclerView.ViewHolder {
         TextView t1, t2, t3;
-        ImageView profileImage;
+        ImageView profileImage,delete;
 
-        public myviewholder(@NonNull View itemView) {
+        public myviewholder(@NonNull View itemView , OnItemClickListener listener) {
             super(itemView);
             t1 = itemView.findViewById(R.id.name);
             t2 = itemView.findViewById(R.id.email_text);
             t3 = itemView.findViewById(R.id.phone);
+            delete=itemView.findViewById(R.id.remove);
             profileImage = itemView.findViewById(R.id.image_view);
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onDeleteClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 

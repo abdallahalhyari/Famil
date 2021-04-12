@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -95,7 +96,7 @@ public class Register extends AppCompatActivity {
         if (firebaseUser != null) {
             if (firebaseUser.isEmailVerified()) {
                 progressBar.setVisibility(View.INVISIBLE);
-                startActivity(new Intent(Register.this, profile.class));
+                startActivity(new Intent(Register.this, MapsActivity.class));
             } else {
                 progressBar.setVisibility(View.INVISIBLE);
                 startActivity(new Intent(Register.this, login.class));
@@ -129,6 +130,11 @@ public class Register extends AppCompatActivity {
                 if (TextUtils.isEmpty(email)) {
                     mEmail.setError("Email is Required.");
                     return;
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    mEmail.setError("Please enter a valid email address");
+                    return;
+                } else {
+                    mEmail.setError(null);
                 }
 
                 if (TextUtils.isEmpty(password)) {

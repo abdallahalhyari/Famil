@@ -45,6 +45,7 @@ public class listEmail extends AppCompatActivity {
     String id, ID;
     int i = 0;
     Intent intent;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +70,7 @@ public class listEmail extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
-                        intent=new Intent(getApplicationContext(), MapsActivity.class);
+                        intent = new Intent(getApplicationContext(), MapsActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
@@ -78,7 +79,7 @@ public class listEmail extends AppCompatActivity {
                     case R.id.navigation_notifications:
                         return true;
                     case R.id.navigation_dashboard:
-                        intent=new Intent(getApplicationContext(), profile.class);
+                        intent = new Intent(getApplicationContext(), ChatRoom.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
@@ -134,10 +135,22 @@ public class listEmail extends AppCompatActivity {
             }
 
         });
+        adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
 
+            }
 
+            @Override
+            public void onDeleteClick(int position) {
+                removeItem(position);
+            }
+        });
     }
 
-
+    public void removeItem(int position) {
+        datalist.remove(position);
+        adapter.notifyItemRemoved(position);
+    }
 }
 
