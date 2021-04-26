@@ -1,7 +1,11 @@
 package com.example.myapplication;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,11 +25,14 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,11 +42,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -50,6 +62,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,8 +78,10 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     private ListView listView_chat;
     ArrayList<String> list_chat;
     Adapter_Chat arrayAdapter;
+    ArrayList<String> datalist;
     private String name;
     FirebaseFirestore fStore;
+    Button send;
     StorageReference storageReference;
     FirebaseAuth fAuth;
     DocumentReference documentReference;
@@ -72,11 +91,11 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     ImageView imageView;
     Toolbar toolbar;
     Intent intent;
-    boolean flag = false;
-    boolean flag2 = false;
     BottomNavigationView bottomNavigationView;
     private DrawerLayout drawer;
-FrameLayout frameLayout;
+    String token;
+    int i;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("ResourceAsColor")
     @Override
@@ -84,6 +103,7 @@ FrameLayout frameLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
         toolbar = findViewById(R.id.toolbar);
+        FirebaseMessaging.getInstance().subscribeToTopic("all");
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
@@ -91,7 +111,7 @@ FrameLayout frameLayout;
         toggle.getDrawerArrowDrawable().setColor(getColor(R.color.toggle));
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
+        datalist = new ArrayList<>();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -107,7 +127,7 @@ FrameLayout frameLayout;
                         finish();
                         return true;
                     case R.id.navigation_notifications:
-                        intent = new Intent(getApplicationContext(), listEmail.class);
+                        intent = new Intent(getApplicationContext(), Help_Press.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
@@ -128,7 +148,7 @@ FrameLayout frameLayout;
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 id = value.getString("parentid");
-                root = FirebaseDatabase.getInstance().getReference().child("MainChatRoom").child(id);
+                root = FirebaseDatabase.getInstance().getReference().child("ChatRoom").child(id);
                 listView_chat = (ListView) findViewById(R.id.View_chat);
                 input_msg = (EditText) findViewById(R.id.input_msg);
                 btn_send_msg = (Button) findViewById(R.id.btn_send_msg);
@@ -148,7 +168,32 @@ FrameLayout frameLayout;
                         DatabaseReference message_root = root.child(temp_key);
                         Map<String, Object> map2 = new HashMap<String, Object>();
                         map2.put("name", name + " : " + input_msg.getText().toString());
-                        message_root.updateChildren(map2);
+                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Tokens").child(id);
+                        databaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    datalist.add(dataSnapshot.getValue(String.class));
+                                }
+                                for (i = 0; datalist.size() > i; i++) {
+                                    if (!token.equals(datalist.get(i))) {
+                                        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist.get(i), name, input_msg.getText().toString(), getApplicationContext(), ChatRoom.this);
+                                        notificationsSender.SendNotifications();
+                                    }
+                                }
+                                message_root.updateChildren(map2);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                        datalist.clear();
+
+
                     }
                 });
 
@@ -187,17 +232,30 @@ FrameLayout frameLayout;
             @Override
             public void onVisibilityChanged(boolean isOpen) {
                 if (isOpen) {
-                  bottomNavigationView.setVisibility(View.GONE);
+                    bottomNavigationView.setVisibility(View.GONE);
                 } else {
-                  bottomNavigationView.setVisibility(View.VISIBLE);
+                    bottomNavigationView.setVisibility(View.VISIBLE);
                 }
 
             }
 
         });
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            askPermissions();
+        }
+
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        token = Objects.requireNonNull(task.getResult()).getToken();
+                        FirebaseDatabase.getInstance().getReference("Tokens").child(id).child(fAuth.getCurrentUser().getUid()).setValue(token);
+                    }
+                });
+
 
     }
-
 
 
     private String chat_msg, chat_user_name;
@@ -222,13 +280,13 @@ FrameLayout frameLayout;
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-            UIUtil.hideKeyboard(this); }
-        else {
+            UIUtil.hideKeyboard(this);
+        } else {
             intent = new Intent(getApplicationContext(), ChatRoom.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
-           ;
+            ;
         }
     }
 
@@ -238,7 +296,7 @@ FrameLayout frameLayout;
         if (id == R.id.nav_profile) {
             toolbar.setTitle("Profile");
             drawer.close();
-       //     bottomNavigationView.setVisibility(View.GONE);
+            //     bottomNavigationView.setVisibility(View.GONE);
             getSupportFragmentManager().beginTransaction().replace(R.id.activity_chate_room, new profile_fra()).commit();
         }
         if (id == R.id.nav_message) {
@@ -248,6 +306,20 @@ FrameLayout frameLayout;
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
+        }
+        if (id == R.id.nav_logout) {
+            toolbar.setTitle("Home");
+            Intent intent = new Intent(getApplicationContext(), Register.class);
+            fAuth.signOut();
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
+        if (id == R.id.nav_call) {
+            toolbar.setTitle("Home");
+            drawer.close();
+            Intent intent = new Intent(getApplicationContext(), calling.class);
+            startActivity(intent);
+
         }
         return true;
     }
@@ -274,5 +346,13 @@ FrameLayout frameLayout;
                 name.setText(value.getString("name"));
             }
         });
+
     }
+
+    private void askPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, 1);
+    }
+
+
 }

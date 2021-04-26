@@ -1,7 +1,9 @@
 package com.example.myapplication;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -31,6 +34,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.security.Permission;
+
 import javax.annotation.Nullable;
 
 public class profile_fra extends Fragment {
@@ -39,6 +44,7 @@ public class profile_fra extends Fragment {
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     Button resendCode;
+    String name;
     Button resetPassLocal, changeProfileImage, addmember,logout,member;
     FirebaseUser user;
     ImageView profileImage, id_image;
@@ -78,6 +84,7 @@ public class profile_fra extends Fragment {
         storageReference = FirebaseStorage.getInstance().getReference();
 
 
+
         StorageReference profileRef = storageReference.child("users/" + user.getEmail() + "/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -99,7 +106,7 @@ public class profile_fra extends Fragment {
                     email.setText(documentSnapshot.getString("email"));
                     phone.setText(documentSnapshot.getString("phone"));
                     userID.setText(documentSnapshot.getString("Id"));
-
+                    name=documentSnapshot.getString("name");
                     if (!userID.getText().toString().equals("1")) {
 
                         userID.setVisibility(View.VISIBLE);
@@ -170,10 +177,14 @@ public class profile_fra extends Fragment {
     logout.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(v.getContext(), Register.class);
+            Intent intent = new Intent(v.getContext(), calling.class);
+
+            startActivity(intent);
+         /*  Intent intent = new Intent(v.getContext(), Register.class);
             fAuth.signOut();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+*/
         }
     });
         member.setOnClickListener(new View.OnClickListener() {
@@ -185,8 +196,10 @@ public class profile_fra extends Fragment {
                 startActivity(intent);
             }
         });
+
         return v;
     }
+
 
 
 

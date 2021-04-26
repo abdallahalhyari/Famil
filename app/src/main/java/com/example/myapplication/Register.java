@@ -77,11 +77,9 @@ public class Register extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String fullName;
     String phone;
-    DocumentReference documentReference;
-    DatabaseReference databaseReference;
     Location currentLocation;
     private FusedLocationProviderClient mFusedLocationClient;
-
+    Intent call;
     GeoPoint geoPoint;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -100,7 +98,6 @@ public class Register extends AppCompatActivity {
             } else {
                 progressBar.setVisibility(View.INVISIBLE);
                 startActivity(new Intent(Register.this, login.class));
-
             }
         }
 

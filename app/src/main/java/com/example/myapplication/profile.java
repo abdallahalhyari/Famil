@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,13 +38,14 @@ public class profile extends AppCompatActivity {
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     Button resendCode;
-    Button resetPassLocal, changeProfileImage, addmember,logout;
+    Button resetPassLocal, changeProfileImage, addmember, logout;
     FirebaseUser user;
     ImageView profileImage, id_image;
     StorageReference storageReference;
     DocumentReference documentReference;
-   static Uri image;
-Intent intent;
+    static Uri image;
+    Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -184,8 +186,7 @@ Intent intent;
 
 
     public void logout(View view) {
-        Intent intent = new Intent(view.getContext(), ChatRoom.class);
-        startActivity(intent);
+
      /*   Intent intent = new Intent(view.getContext(), Register.class);
         fAuth.signOut();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

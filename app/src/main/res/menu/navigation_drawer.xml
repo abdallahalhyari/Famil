@@ -8,24 +8,28 @@
             android:icon="@drawable/ic_baseline_home_24"
             android:title="Home" />
         <item
-            android:id="@+id/nav_chat"
-            android:icon="@drawable/ic_dashboard_black_24dp"
-            android:title="Chat" />
-        <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_person_black_24dp"
             android:title="Profile" />
+        <item
+            android:id="@+id/nav_call"
+            android:icon="@android:drawable/stat_sys_phone_call"
+            android:title="call" />
     </group>
     <item android:title="Communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:icon="@drawable/ic_dashboard_black_24dp"
+                android:icon="@drawable/ic_baseline_share_24"
                 android:title="Share" />
             <item
                 android:id="@+id/nav_send"
-                android:icon="@drawable/ic_dashboard_black_24dp"
-                android:title="Send" />
+                android:icon="@drawable/ic_baseline_send_24"
+                android:title="Communicate with us" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_baseline_exit_to_app_24"
+                android:title="Logout" />
         </menu>
     </item>
 </menu>

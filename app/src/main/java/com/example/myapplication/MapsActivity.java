@@ -61,13 +61,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     static GeoPoint geoPoint;
     Intent intent;
     BroadcastReceiver br;
-    Boolean therad=false;
+    Boolean therad = false;
+    Intent intent3;
     mythread mythrea;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
+        startService(new Intent(this, com.example.myapplication.LocationServices.class));
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
@@ -77,8 +79,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         dataList = new ArrayList<>();
         listlocation = new ArrayList<>();
         br = new background_process();
-    //    Intent filter = new Intent(this,background_process.class);
-      //  this.sendBroadcast(filter);
+        //    Intent filter = new Intent(this,background_process.class);
+        //  this.sendBroadcast(filter);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -90,14 +93,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     case R.id.navigation_home:
                         return true;
                     case R.id.navigation_notifications:
-                        therad=true;
-                        intent = new Intent(getApplicationContext(), listEmail.class);
+                        therad = true;
+                        intent = new Intent(getApplicationContext(), Help_Press.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
                         return true;
                     case R.id.navigation_dashboard:
-                       therad=true;
+                        therad = true;
                         intent = new Intent(getApplicationContext(), ChatRoom.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
@@ -107,27 +110,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         });
-        mythrea = new mythread();
-       mythrea.start();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        getlocaiondatabase();
+
     }
 
     class mythread extends Thread {
         @Override
         public void run() {
-            while (true ) {
+            while (true) {
 
                 try {
-                    if (therad==false) {
+                    if (!therad) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mMap.clear();
-                                requestNewLocationData();
-                                getlocaiondatabase();
+
+                                // requestNewLocationData();
+
                             }
                         });
 
-                        Thread.sleep(6000);
+                        Thread.sleep(8000);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -157,6 +165,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        mMap.clear();
                         dataList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             dataList.add(dataSnapshot.getValue(User.class));
@@ -192,19 +201,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void requestNewLocationData() {
 
 
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(5);
-        mLocationRequest.setFastestInterval(0);
-        mLocationRequest.setNumUpdates(1);
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
+        //    LocationRequest mLocationRequest = new LocationRequest();
+        //  mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        //mLocationRequest.setInterval(5);
+        //mLocationRequest.setFastestInterval(0);
+        //mLocationRequest.setNumUpdates(1);
 
 
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+        //      mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
 
     }
 
@@ -215,8 +219,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Location mLastLocation = locationResult.getLastLocation();
             geoPoint = new GeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             if (fAuth.getCurrentUser() != null) {
-                firebaseDatabase.getReference().child(id).child(id2).child("locationla").setValue(String.valueOf(mLastLocation.getLatitude()));
-                firebaseDatabase.getReference().child(id).child(id2).child("locationlo").setValue(String.valueOf(mLastLocation.getLongitude()));
+                //         firebaseDatabase.getReference().child(id).child(id2).child("locationla").setValue(String.valueOf(mLastLocation.getLatitude()));
+                //      firebaseDatabase.getReference().child(id).child(id2).child("locationlo").setValue(String.valueOf(mLastLocation.getLongitude()));
             }
 
         }
