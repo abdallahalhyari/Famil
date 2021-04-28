@@ -18,7 +18,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/holo_blue_dark"
+            android:background="#f8f8ff"
             android:elevation="4dp"
             app:titleTextColor="@color/toggle"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -44,7 +44,7 @@
                     android:divider="@null"
                     android:dividerHeight="10dp"
                     tools:listitem="@layout/chating"
-                    android:background="#0A1B53"/>
+                    android:background="#f8f8ff"/>
 
 
 
@@ -53,7 +53,7 @@
                         android:layout_height="wrap_content"
                         android:minWidth="0dp"
                         android:orientation="horizontal"
-                        android:background="#79CAEA">
+                        android:background="#f8f8ff">
 
                         <EditText
                             android:id="@+id/input_msg"
@@ -79,10 +79,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:menu="@menu/bottom_nav_menu"
-                    android:background="?android:attr/windowBackground"
+                    android:background="#f8f8ff"
                     android:layout_alignParentBottom="true"
                     tools:ignore="ObsoleteLayoutParam"
-                    app:itemBackground="@android:color/holo_blue_dark"
                     app:itemTextColor="@color/design_default_color_menu"
                     app:itemIconTint="@color/design_default_color_menu"/>
             </LinearLayout>

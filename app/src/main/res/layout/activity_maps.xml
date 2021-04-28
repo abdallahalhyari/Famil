@@ -20,10 +20,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_nav_menu"
-        android:background="?android:attr/windowBackground"
+        android:background="#f8f8ff"
         android:layout_alignParentBottom="true"
         tools:ignore="ObsoleteLayoutParam"
-        app:itemBackground="@android:color/holo_blue_dark"
         app:itemTextColor="@color/design_default_color_menu"
         app:itemIconTint="@color/design_default_color_menu"/>
 

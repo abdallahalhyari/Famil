@@ -4,17 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#79CAEA"
+    android:background="#f8f8ff"
     android:orientation="vertical"
     android:id="@+id/main"
     tools:context=".MainActivity"
     android:gravity="center">
+ <com.airbnb.lottie.LottieAnimationView
+     android:layout_weight="1"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     app:lottie_fileName="location.json"
+     app:lottie_autoPlay="true"
+     app:lottie_loop="true"/>
 
+ <TextView
+     android:id="@+id/textView"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:textColor="@color/black"
+     android:textStyle="bold"
+     android:text="RaqibJo"
+     android:textSize="50dp"
+     android:paddingBottom="5dp"/>
 
  <com.airbnb.lottie.LottieAnimationView
-     android:layout_width="match_parent"
-     android:layout_height="match_parent"
-     app:lottie_fileName="caring-family.json"
-     app:lottie_autoPlay="true"/>
+     android:layout_weight="1"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     app:lottie_fileName="Kids.json"
+     app:lottie_autoPlay="true"
+     app:lottie_loop="true"/>
+
+
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>

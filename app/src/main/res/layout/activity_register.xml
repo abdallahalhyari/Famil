@@ -6,21 +6,22 @@
     android:id="@+id/register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#79CAEA"
+    android:background="#f8f8ff"
     tools:context=".Register">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="500dp"
-        android:layout_height="400dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="loading.json"
+        app:lottie_fileName="location.json"
         app:lottie_loop="true"
         tools:ignore="MissingConstraints" />
+
 
     <TextView
         android:id="@+id/textView2"
@@ -190,7 +191,7 @@
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#79CAEA"
+        android:background="#f8f8ff"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/registerBtn"
