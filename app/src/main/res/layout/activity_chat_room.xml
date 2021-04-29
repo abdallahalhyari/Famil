@@ -79,7 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:menu="@menu/bottom_nav_menu"
-                    android:background="#f8f8ff"
+                    android:background="#79CAEA"
                     android:layout_alignParentBottom="true"
                     tools:ignore="ObsoleteLayoutParam"
                     app:itemTextColor="@color/design_default_color_menu"
@@ -98,5 +98,5 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav"
         app:menu="@menu/navigation_drawer"
-        android:background="#79CAEA"/>
+        android:background="#f8f8ff"/>
 </androidx.drawerlayout.widget.DrawerLayout>

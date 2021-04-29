@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:background="#f8f8ff"
+        android:background="#79CAEA"
         app:itemIconTint="@color/design_default_color_menu"
         app:itemTextColor="@color/design_default_color_menu"
         app:menu="@menu/bottom_nav_menu"
