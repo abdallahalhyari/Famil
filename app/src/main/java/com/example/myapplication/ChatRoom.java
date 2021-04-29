@@ -2,13 +2,22 @@ package com.example.myapplication;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,12 +37,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -61,6 +73,7 @@ import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -74,6 +87,8 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     private DatabaseReference root;
     private String temp_key;
     private Button btn_send_msg;
+    ImageView ivImage;
+    Integer REQUEST_CAMERA=1, SELECT_FILE=0;
     private EditText input_msg;
     private ListView listView_chat;
     ArrayList<String> list_chat;
@@ -81,7 +96,6 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     ArrayList<String> datalist;
     private String name;
     FirebaseFirestore fStore;
-    Button send;
     StorageReference storageReference;
     FirebaseAuth fAuth;
     DocumentReference documentReference;
@@ -91,6 +105,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     ImageView imageView;
     Toolbar toolbar;
     Intent intent;
+    Button send;
     BottomNavigationView bottomNavigationView;
     private DrawerLayout drawer;
     String token;
@@ -254,7 +269,14 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
                     }
                 });
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                SelectImage();
+            }
+        });
     }
 
 
@@ -286,7 +308,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
-            ;
+
         }
     }
 
@@ -309,6 +331,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         }
         if (id == R.id.nav_logout) {
             toolbar.setTitle("Home");
+            stopService(new Intent(this, com.example.myapplication.LocationServices.class));
             Intent intent = new Intent(getApplicationContext(), Register.class);
             fAuth.signOut();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -354,5 +377,60 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
                 Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, 1);
     }
 
+    private void SelectImage() {
+
+        final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
+        builder.setTitle("Add Image");
+
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (items[i].equals("Camera")) {
+
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, REQUEST_CAMERA);
+
+                } else if (items[i].equals("Gallery")) {
+
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, SELECT_FILE);
+
+                } else if (items[i].equals("Cancel")) {
+                    dialogInterface.dismiss();
+                }
+            }
+        });
+        builder.show();
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == REQUEST_CAMERA) {
+
+                Bundle bundle = data.getExtras();
+                final Bitmap bmp = (Bitmap) bundle.get("data");
+                ivImage.setImageBitmap(bmp);
+
+            } else if (requestCode == SELECT_FILE) {
+
+                Uri selectedImageUri = data.getData();
+                SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder();
+                spannableStringBuilder.setSpan(new ImageSpan(this,selectedImageUri),spannableStringBuilder.length()-1,spannableStringBuilder.length(),0);
+//            arrayAdapter.insert("spannableStringBuilder.toString()",datalist.size());
+
+            }
+
+        }
+    }
 
 }
+

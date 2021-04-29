@@ -65,7 +65,7 @@ public class LocationServices extends Service {
             documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if (value.exists()) {
+                    if (value != null && value.exists()) {
                         id = value.getString("parentid");
                         if (fAuth.getCurrentUser() != null) {
                             firebaseDatabase.getReference().child(id).child(id2).child("locationla").setValue(String.valueOf(mLastLocation.getLatitude()));

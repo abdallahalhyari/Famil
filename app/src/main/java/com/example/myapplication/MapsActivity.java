@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,6 +44,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private FusedLocationProviderClient mFusedLocationClient;
@@ -148,6 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
     }
 
     public void getlocaiondatabase() {
@@ -177,12 +183,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             ido = dataList.get(i).getLocationlo();
                             parentid = dataList.get(i).getId();
                             name = dataList.get(i).getName();
-
+                            LatLng mLatLng =new LatLng(Double.parseDouble(ida),Double.parseDouble(ido));
+                            CircleOptions circleOptions = new CircleOptions()
+                                    .center(mLatLng)   //set center
+                                    .radius(100)   //set radius in meters
+                                    .fillColor(Color.parseColor("#CCFB2323"))  //default
+                                    .strokeColor(Color.parseColor("#CCFB2323"))
+                                    .strokeWidth(1);
+                            Circle myCircle6 = mMap.addCircle(circleOptions);
                             LatLng sydney = new LatLng(Double.parseDouble(ida), Double.parseDouble(ido));
                             mMap.addMarker(new MarkerOptions().position(sydney).title(name));
                             if (i1 == 0) {
                                 i1 = 1;
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+
                             }
                         }
                     }
