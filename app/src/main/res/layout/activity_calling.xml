@@ -54,24 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_alignParentBottom="true"
-        android:id="@+id/inputLayout">
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/friendNameEdit"
-            android:layout_toStartOf="@id/callBtn"
-            android:hint="Who do you want to call?" />
-
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="call"
-            android:id="@+id/callBtn"
-            android:layout_alignParentEnd="true" />
-
-    </RelativeLayout>
+        android:id="@+id/inputLayout"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

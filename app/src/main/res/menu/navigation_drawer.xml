@@ -14,7 +14,7 @@
         <item
             android:id="@+id/nav_call"
             android:icon="@android:drawable/stat_sys_phone_call"
-            android:title="call" />
+            android:title="Call" />
     </group>
     <item android:title="Communicate">
         <menu>

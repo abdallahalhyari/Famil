@@ -92,7 +92,7 @@ public class calling extends AppCompatActivity {
         recview.setAdapter(itemsAdapter);
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
-        callBtn = findViewById(R.id.callBtn);
+
         fStore = FirebaseFirestore.getInstance();
         recview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -102,7 +102,7 @@ public class calling extends AppCompatActivity {
                 sendCallRequest();
             }
         });
-        friendNameEdit = findViewById(R.id.friendNameEdit);
+
         documentReference = fStore.collection("user").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
