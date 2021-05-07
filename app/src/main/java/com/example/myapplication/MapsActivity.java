@@ -10,6 +10,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +35,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,12 +48,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.gson.JsonParseException;
+import com.google.protobuf.Value;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,AdapterView.OnItemSelectedListener {
     private FusedLocationProviderClient mFusedLocationClient;
     private GoogleMap mMap;
     FirebaseAuth fAuth;
@@ -60,7 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FirebaseFirestore fStore;
     String ido;
     String ida;
-    String id, id2, parentid;
+    String id, id2, parentid, ID;
     String name;
     FirebaseDatabase firebaseDatabase;
     static GeoPoint geoPoint;
@@ -68,7 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     BroadcastReceiver br;
     Boolean therad = false;
     Intent intent3;
-    mythread mythrea;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +92,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         dataList = new ArrayList<>();
         listlocation = new ArrayList<>();
         br = new background_process();
-        //    Intent filter = new Intent(this,background_process.class);
-        //  this.sendBroadcast(filter);
-
         firebaseDatabase = FirebaseDatabase.getInstance();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -120,34 +125,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         getlocaiondatabase();
-
+        Spinner spinner = findViewById(R.id.spinner1);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.numbers, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
     }
 
-    class mythread extends Thread {
-        @Override
-        public void run() {
-            while (true) {
-
-                try {
-                    if (!therad) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mMap.clear();
-
-                                // requestNewLocationData();
-
-                            }
-                        });
-
-                        Thread.sleep(8000);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -165,6 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (value.exists()) {
                     id = value.getString("parentid");
+
                 }
 
                 databaseReference = firebaseDatabase.getReference().child(id);
@@ -183,20 +169,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             ido = dataList.get(i).getLocationlo();
                             parentid = dataList.get(i).getId();
                             name = dataList.get(i).getName();
-                            LatLng mLatLng =new LatLng(Double.parseDouble(ida),Double.parseDouble(ido));
-                            CircleOptions circleOptions = new CircleOptions()
-                                    .center(mLatLng)   //set center
-                                    .radius(100)   //set radius in meters
-                                    .fillColor(Color.parseColor("#CCFB2323"))  //default
-                                    .strokeColor(Color.parseColor("#CCFB2323"))
-                                    .strokeWidth(1);
-                            Circle myCircle6 = mMap.addCircle(circleOptions);
                             LatLng sydney = new LatLng(Double.parseDouble(ida), Double.parseDouble(ido));
                             mMap.addMarker(new MarkerOptions().position(sydney).title(name));
-                            if (i1 == 0) {
-                                i1 = 1;
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+                            if (!dataList.get(i).getId().equals("1")) {
+                                if (i1 == 0) {
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17));
+                                    i1 = 1;
+                                }
+                                for (int x = 0; x < dataList.size(); x++) {
+                                    if (!dataList.get(i).getId().equals(dataList.get(x).getId())) {
 
+                                        double dis = meterDistanceBetweenPoints(Float.parseFloat(dataList.get(i).getLocationla()), Float.parseFloat(dataList.get(i).getLocationlo()), Float.parseFloat(dataList.get(x).getLocationla()), Float.parseFloat(dataList.get(x).getLocationlo()));
+                                        if (dis > 100) {
+                                            Toast.makeText(getBaseContext(), dis + "meter", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }
+                                LatLng mLatLng = new LatLng(Double.parseDouble(ida), Double.parseDouble(ido));
+                                CircleOptions circleOptions = new CircleOptions()
+                                        .center(mLatLng)   //set center
+                                        .radius(10)   //set radius in meters
+                                        .fillColor(Color.parseColor("#CCFB2323"))  //default
+                                        .strokeColor(Color.BLACK)
+                                        .strokeWidth(5);
+                                Circle myCircle6 = mMap.addCircle(circleOptions);
                             }
                         }
                     }
@@ -212,34 +208,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void requestNewLocationData() {
+    private double meterDistanceBetweenPoints(float lat_a, float lng_a, float lat_b, float lng_b) {
+        float pk = (float) (180.f / Math.PI);
+
+        float a1 = lat_a / pk;
+        float a2 = lng_a / pk;
+        float b1 = lat_b / pk;
+        float b2 = lng_b / pk;
+
+        double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
+        double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
+        double t3 = Math.sin(a1) * Math.sin(b1);
+        double tt = Math.acos(t1 + t2 + t3);
+
+        return 6366000 * tt;
+    }
 
 
-        //    LocationRequest mLocationRequest = new LocationRequest();
-        //  mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        //mLocationRequest.setInterval(5);
-        //mLocationRequest.setFastestInterval(0);
-        //mLocationRequest.setNumUpdates(1);
-
-
-        //      mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
     }
 
-    private LocationCallback mLocationCallback = new LocationCallback() {
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            Location mLastLocation = locationResult.getLastLocation();
-            geoPoint = new GeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            if (fAuth.getCurrentUser() != null) {
-                //         firebaseDatabase.getReference().child(id).child(id2).child("locationla").setValue(String.valueOf(mLastLocation.getLatitude()));
-                //      firebaseDatabase.getReference().child(id).child(id2).child("locationlo").setValue(String.valueOf(mLastLocation.getLongitude()));
-            }
-
-        }
-    };
-
+    }
 }
 
 

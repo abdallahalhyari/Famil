@@ -68,7 +68,7 @@ public class calling extends AppCompatActivity {
     private boolean isVideo = true;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-    Button callBtn;
+
     ListView recview;
     Adapter adapter;
     TextView friendNameEdit;

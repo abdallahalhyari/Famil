@@ -177,22 +177,18 @@ public class profile_fra extends Fragment {
     logout.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(v.getContext(), calling.class);
 
-            startActivity(intent);
-         /*  Intent intent = new Intent(v.getContext(), Register.class);
+           Intent intent = new Intent(v.getContext(), Register.class);
             fAuth.signOut();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-*/
+
         }
     });
         member.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), Register.class);
-                fAuth.signOut();
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Intent intent = new Intent(v.getContext(), listEmail.class);
                 startActivity(intent);
             }
         });

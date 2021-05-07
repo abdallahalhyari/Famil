@@ -8,25 +8,20 @@ import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,10 +30,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -65,21 +59,20 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 import net.yslibrary.android.keyboardvisibilityevent.util.UIUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.UUID;
 
 
 public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -88,10 +81,11 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     private String temp_key;
     private Button btn_send_msg;
     ImageView ivImage;
-    Integer REQUEST_CAMERA=1, SELECT_FILE=0;
+    Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
     private EditText input_msg;
     private ListView listView_chat;
     ArrayList<String> list_chat;
+    String uri1;
     Adapter_Chat arrayAdapter;
     ArrayList<String> datalist;
     private String name;
@@ -118,6 +112,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
         toolbar = findViewById(R.id.toolbar);
+
         FirebaseMessaging.getInstance().subscribeToTopic("all");
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer);
@@ -126,6 +121,8 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         toggle.getDrawerArrowDrawable().setColor(getColor(R.color.toggle));
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+
         datalist = new ArrayList<>();
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -197,7 +194,6 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
                                         notificationsSender.SendNotifications();
                                     }
                                 }
-                                message_root.updateChildren(map2);
                             }
 
                             @Override
@@ -206,6 +202,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
                             }
                         });
 
+                        message_root.updateChildren(map2);
                         datalist.clear();
 
 
@@ -280,21 +277,18 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     }
 
 
-    private String chat_msg, chat_user_name;
+    private String chat_msg;
 
     private void Add_Chat(DataSnapshot dataSnapshot) {
 
-        Iterator i = dataSnapshot.getChildren().iterator();
+        Iterator<DataSnapshot> i = dataSnapshot.getChildren().iterator();
         input_msg.setText("");
         while (i.hasNext()) {
-
-            chat_user_name = (String) ((DataSnapshot) i.next()).getValue();
-
+            String chat_user_name = (String) (i.next()).getValue();
             list_chat.add(chat_user_name);
-            arrayAdapter.notifyDataSetChanged();
-            listView_chat.setSelection(list_chat.size());
         }
-
+        arrayAdapter.notifyDataSetChanged();
+        listView_chat.setSelection(list_chat.size());
 
     }
 
@@ -312,6 +306,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -330,12 +325,8 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
             finish();
         }
         if (id == R.id.nav_logout) {
-            toolbar.setTitle("Home");
-            stopService(new Intent(this, com.example.myapplication.LocationServices.class));
-            Intent intent = new Intent(getApplicationContext(), Register.class);
             fAuth.signOut();
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_call) {
             toolbar.setTitle("Home");
@@ -343,6 +334,19 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
             Intent intent = new Intent(getApplicationContext(), calling.class);
             startActivity(intent);
 
+        }
+        if (id == R.id.nav_share) {
+
+            Intent shareAPkIntent = new Intent();
+            shareAPkIntent.setAction(Intent.ACTION_SEND);
+            File im=new File(getApplicationContext().getApplicationInfo().sourceDir);
+            shareAPkIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
+                    this,BuildConfig.APPLICATION_ID + ".provider", im));
+
+            shareAPkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareAPkIntent.setType("application/vnd.android.package-archive");
+
+            this.startActivity(Intent.createChooser(shareAPkIntent,"Share APK"));
         }
         return true;
     }
@@ -379,7 +383,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
 
     private void SelectImage() {
 
-        final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
+        final CharSequence[] items = { "Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
         builder.setTitle("Add Image");
@@ -388,13 +392,9 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
 
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if (items[i].equals("Camera")) {
+                if (items[i].equals("Gallery")) {
 
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_CAMERA);
-
-                } else if (items[i].equals("Gallery")) {
-
+                    @SuppressLint("IntentReset")
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     intent.setType("image/*");
                     startActivityForResult(intent, SELECT_FILE);
@@ -413,24 +413,54 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-
-            if (requestCode == REQUEST_CAMERA) {
-
-                Bundle bundle = data.getExtras();
-                final Bitmap bmp = (Bitmap) bundle.get("data");
-                ivImage.setImageBitmap(bmp);
-
-            } else if (requestCode == SELECT_FILE) {
-
+            if (requestCode == SELECT_FILE) {
+                String id = getUniqueID();
                 Uri selectedImageUri = data.getData();
-                SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder();
-                spannableStringBuilder.setSpan(new ImageSpan(this,selectedImageUri),spannableStringBuilder.length()-1,spannableStringBuilder.length(),0);
-//            arrayAdapter.insert("spannableStringBuilder.toString()",datalist.size());
+                final StorageReference fileRef = storageReference.child("users/" + id + "/profile.jpg");
+                fileRef.putFile(selectedImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        temp_key = root.push().getKey();
+                        root.updateChildren(map);
+
+                        DatabaseReference message_root = root.child(temp_key);
+                        Map<String, Object> map2 = new HashMap<String, Object>();
+                        map2.put("name", "users/" + id + "/profile.jpg");
+                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Tokens").child(id);
+                        databaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    datalist.add(dataSnapshot.getValue(String.class));
+                                }
+                                for (i = 0; datalist.size() > i; i++) {
+                                    if (!token.equals(datalist.get(i))) {
+                                        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist.get(i), "name", "input_msg.getText().toString()", getApplicationContext(), ChatRoom.this);
+                                        notificationsSender.SendNotifications();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                        message_root.updateChildren(map2);
+                        datalist.clear();
+                    }
+                });
 
             }
 
         }
     }
 
+    private final String getUniqueID() {
+        return UUID.randomUUID().toString();
+    }
 }
 

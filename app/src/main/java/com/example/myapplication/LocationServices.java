@@ -70,7 +70,7 @@ public class LocationServices extends Service {
                         if (fAuth.getCurrentUser() != null) {
                             firebaseDatabase.getReference().child(id).child(id2).child("locationla").setValue(String.valueOf(mLastLocation.getLatitude()));
                             firebaseDatabase.getReference().child(id).child(id2).child("locationlo").setValue(String.valueOf(mLastLocation.getLongitude()));
-                            Log.d("tag", "Document do not exists");
+
                         }
                     }
                 }

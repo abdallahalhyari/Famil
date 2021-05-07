@@ -7,6 +7,11 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical">
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#79CAEA"/>
 
 
     <fragment
@@ -26,5 +31,6 @@
         tools:ignore="ObsoleteLayoutParam"
         app:itemTextColor="@color/design_default_color_menu"
         app:itemIconTint="@color/design_default_color_menu"/>
+
 
 </LinearLayout>
