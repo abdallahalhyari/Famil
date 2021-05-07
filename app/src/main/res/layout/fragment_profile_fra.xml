@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".profile_fra">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#f8f8ff"
@@ -20,11 +19,11 @@
             android:id="@+id/logout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="68dp"
-            android:background="@drawable/button_"
-            android:text="Logout"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/button_"
+            android:text="Logout"
             android:textColor="#add8e6"
             android:textColorHighlight="#C2185B"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -41,7 +40,7 @@
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.068"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_person_black_24dp" />
 
         <TextView
@@ -131,7 +130,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/changeProfile"
-            app:layout_constraintVertical_bias="0.534" />
+            app:layout_constraintVertical_bias="0.789" />
 
         <TextView
             android:id="@+id/textView3"
@@ -171,7 +170,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profileName"
             app:srcCompat="@drawable/ic_email_black_24dp" />
@@ -181,7 +180,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profileEmail"
             app:srcCompat="@drawable/ic_local_phone_black_24dp" />
@@ -201,13 +200,13 @@
             android:id="@+id/id_m"
             android:layout_width="20dp"
             android:layout_height="25dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.04"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profileImage"
-            app:layout_constraintVertical_bias="0.441"
+            app:layout_constraintVertical_bias="0.434"
             app:srcCompat="@drawable/id" />
 
         <TextView
@@ -216,31 +215,31 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="464dp"
             android:text="Id Number"
-            android:visibility="gone"
+            android:visibility="visible"
 
             app:layout_constraintBottom_toTopOf="@+id/id_number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.139"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/verifyMsg"
-            app:layout_constraintVertical_bias="0.638"
+            app:layout_constraintVertical_bias="1.0"
             tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/id_number"
             android:layout_width="394dp"
             android:layout_height="26dp"
-            android:layout_marginStart="92dp"
+            android:layout_marginStart="4dp"
             android:layout_marginBottom="15dp"
             android:text="yyugyvgy7898"
             android:textIsSelectable="true"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/Add_member"
             app:layout_constraintStart_toEndOf="@+id/id_m"
             app:layout_constraintTop_toBottomOf="@+id/profilePhone"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="1.0"
             tools:ignore="MissingConstraints" />
 
         <Button
@@ -258,7 +257,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profilePhone"
-            app:layout_constraintVertical_bias="0.461" />
+            app:layout_constraintVertical_bias="0.583" />
 
         <Button
             android:id="@+id/Add_member"
@@ -267,16 +266,16 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/button_"
-            android:text="Add a Family Member "
+            android:text="Manage Family Members "
             android:textColor="#add8e6"
             android:textColorHighlight="#C2185B"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/logout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profilePhone"
-            app:layout_constraintVertical_bias="0.181" />
+            app:layout_constraintVertical_bias="0.363" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
