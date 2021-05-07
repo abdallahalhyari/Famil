@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="numbers" >
+            <item>Choose the safety distance</item>
+            <item>1km</item>
+            <item>5km</item>
+            <item>10km</item>
+            <item>15km</item>
+            <item>20km</item>
+
+    </string-array>
+</resources>
