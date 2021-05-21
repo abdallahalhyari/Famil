@@ -9,6 +9,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -37,13 +38,16 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 // playing audio and vibration when user se reques
        if (remoteMessage.getNotification().getBody().equals("The Need Help")) {
-           Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+           MediaPlayer mediaPlayer= MediaPlayer.create(this,R.raw.alarm);
+           mediaPlayer.start();
+           Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
            r.play();
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                r.setLooping(false);
            }
        }else{
+
            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
            r.play();

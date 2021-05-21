@@ -129,6 +129,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.navigation_dashboard);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
@@ -155,6 +156,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         fStore = FirebaseFirestore.getInstance();
         user = fAuth.getCurrentUser();
         update();
+
         documentReference = fStore.collection("user").document(fAuth.getCurrentUser().getUid());
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -336,17 +338,35 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
 
         }
         if (id == R.id.nav_share) {
-
+          //  File im=new File(getApplicationContext().getApplicationInfo().sourceDir);
+            drawer.close();
             Intent shareAPkIntent = new Intent();
             shareAPkIntent.setAction(Intent.ACTION_SEND);
-            File im=new File(getApplicationContext().getApplicationInfo().sourceDir);
-            shareAPkIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(
-                    this,BuildConfig.APPLICATION_ID + ".provider", im));
+            shareAPkIntent.setType("text/plain");
+            shareAPkIntent.putExtra(Intent.EXTRA_SUBJECT, "CCC Course App");
+            shareAPkIntent.putExtra(Intent.EXTRA_TEXT, "Download this Application now:-https://www.youtube.com/watch?v=e0fqpn6Uo4U");
+                    //BuildConfig.APPLICATION_ID + ".provider", im));
 
-            shareAPkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            shareAPkIntent.setType("application/vnd.android.package-archive");
+          //  shareAPkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
 
             this.startActivity(Intent.createChooser(shareAPkIntent,"Share APK"));
+
+        }
+        if (id == R.id.nav_send) {
+            toolbar.setTitle("Home");
+            drawer.close();
+            String recipientList = "talhyari@gmail.com";
+            String[] recipients = recipientList.split(",");
+            String subject = "";
+            String message ="";
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+            intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            intent.putExtra(Intent.EXTRA_TEXT, message);
+            intent.setType("message/rfc822");
+            startActivity(Intent.createChooser(intent, "Choose an email client"));
+
         }
         return true;
     }

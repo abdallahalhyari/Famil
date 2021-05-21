@@ -122,7 +122,7 @@ public class Register extends AppCompatActivity {
                 password = mPassword.getText().toString().trim();
                 fullName = mFullName.getText().toString();
                 phone = mPhone.getText().toString();
-                id_f = id_fa.getText().toString();
+                id_f = id_fa.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
                     mEmail.setError("Email is Required.");
@@ -261,7 +261,7 @@ public class Register extends AppCompatActivity {
                                 String string1 = String.valueOf(geoPoint.getLatitude());
                                 String string2 = String.valueOf(geoPoint.getLongitude());
                                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                                DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + fuser.getUid());
+                                DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + userID);
                                 Map<String, Object> user, location;
                                 user = new HashMap<>();
                                 location = new HashMap<>();

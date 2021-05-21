@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="numbers" >
-            <item>Choose the safety distance</item>
-            <item>1km</item>
-            <item>5km</item>
-            <item>10km</item>
-            <item>15km</item>
-            <item>20km</item>
+    <string-array name="numbers">
+        <item>Choose the safety distance (km)</item>
+        <item>.01</item>
+        <item>.2</item>
+        <item>.5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
 
     </string-array>
 </resources>
