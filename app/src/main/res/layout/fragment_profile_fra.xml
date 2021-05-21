@@ -7,12 +7,11 @@
     tools:context=".profile_fra">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#f8f8ff"
-        tools:context=".profile"
-        android:id="@+id/profile"
-        >
+        tools:context=".profile">
 
 
         <Button
@@ -104,11 +103,11 @@
             android:id="@+id/resendCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/custom_button2"
             android:text="Verify Now"
-            android:visibility="gone"
             android:textColor="#add8e6"
             android:textColorHighlight="#C2185B"
-            android:background="@drawable/custom_button2"
+            android:visibility="gone"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
