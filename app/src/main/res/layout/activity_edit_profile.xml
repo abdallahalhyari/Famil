@@ -9,21 +9,21 @@
 
     <EditText
         android:id="@+id/profileFullName"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="35dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="24dp"
+        android:background="@drawable/text_design1"
         android:ems="10"
         android:hint="Your Name"
-        android:padding="10dp"
-        android:textSize="14sp"
         android:inputType="textPersonName"
-        android:background="@drawable/text_design1"
+        android:padding="10dp"
         android:textColor="#0A1B53"
         android:textColorHint="#0099CC"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toBottomOf="@+id/profileImageView" />
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -40,11 +40,9 @@
 
     <EditText
         android:id="@+id/profileEmailAddress"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="35dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="64dp"
         android:background="@drawable/text_design1"
         android:ems="10"
         android:hint="Your Email Address"
@@ -55,16 +53,14 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileFullName" />
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toTopOf="@+id/profileFullName" />
 
     <EditText
         android:id="@+id/profilePhoneNo"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="35dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="35dp"
         android:background="@drawable/text_design1"
         android:ems="10"
         android:hint="Phone"
@@ -75,10 +71,10 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/saveProfileInfo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintStart_toEndOf="@+id/textView10"
         app:layout_constraintTop_toBottomOf="@+id/profileEmailAddress"
-        app:layout_constraintVertical_bias="0.306" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/saveProfileInfo"
@@ -93,7 +89,7 @@
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/profileEmailAddress"
-        app:layout_constraintVertical_bias="0.849" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -108,4 +104,83 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saveProfileInfo"
         app:layout_constraintVertical_bias="0.694" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:text="Name:"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/profileEmailAddress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.883" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:text="Email:"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:text="Phone:"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.012"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9"
+        app:layout_constraintVertical_bias="0.019" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To phage profile picture press on it."
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/profileFullName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileImageView" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="If you are sure you want to save your personal information as shown above please press save."
+        android:textAlignment="center"
+        android:textColor="#0A1B53"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/profileImageView"
+        app:layout_constraintVertical_bias="0.56" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
