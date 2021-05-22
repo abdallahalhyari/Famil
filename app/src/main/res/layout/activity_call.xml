@@ -51,7 +51,7 @@
         android:layout_height="40dp"
         android:layout_gravity="bottom"
         android:onClick="remove"
-        android:src="@drawable/ic_baseline_delete_outline_24"
+        android:src="@drawable/ic_local_phone_black_24dp"
         tools:ignore="ContentDescription" />
 
 </LinearLayout>

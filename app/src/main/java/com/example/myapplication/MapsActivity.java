@@ -34,6 +34,8 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,18 +50,24 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.JsonParseException;
 import com.google.protobuf.Value;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,AdapterView.OnItemSelectedListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
     private FusedLocationProviderClient mFusedLocationClient;
     private GoogleMap mMap;
     FirebaseAuth fAuth;
     int i, i1 = 0;
+    Spinner spinner;
     LocationManager locationManager;
     ArrayList<User> dataList;
     ArrayList<String> listlocation;
@@ -68,6 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FirebaseFirestore fStore;
     String ido;
     String ida;
+    static ArrayList<String> datalist2;
     String id, id2, parentid, ID;
     String name;
     FirebaseDatabase firebaseDatabase;
@@ -75,7 +84,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Intent intent;
     BroadcastReceiver br;
     Boolean therad = false;
-    Intent intent3;
+    int z=0;
+    double sp;
+    double spp;
+    String token,id3;
 
 
     @Override
@@ -92,6 +104,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         dataList = new ArrayList<>();
         listlocation = new ArrayList<>();
         br = new background_process();
+        datalist2 = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -124,13 +137,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        getlocaiondatabase();
-        Spinner spinner = findViewById(R.id.spinner1);
+
+        spinner = findViewById(R.id.spinner1);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.numbers, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+
+        fAuth = FirebaseAuth.getInstance();
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+                        DocumentReference documentReference = fStore.collection("user").document(fAuth.getCurrentUser().getUid());
+                        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                id3 = value.getString("parentid");
+                                token = Objects.requireNonNull(task.getResult()).getToken();
+
+                            }
+
+                        });
+
+                    }
+                });
+
+        getlocaiondatabase();
     }
 
 
@@ -143,6 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void getlocaiondatabase() {
 
+
         id2 = fAuth.getCurrentUser().getUid();
         documentReference = fStore.collection("user").document(id2);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
@@ -150,9 +187,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (value.exists()) {
                     id = value.getString("parentid");
-
+                    ID=value.getString("Id");
                 }
+                databaseReference = firebaseDatabase.getReference().child("sp" + id);
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
+                            if (!spinner.getItemAtPosition(Integer.parseInt(dataSnapshot.getValue().toString())).equals("Choose the safety distance (km)")) {
+                                sp = Double.parseDouble(dataSnapshot.getValue().toString());
+                                spinner.setSelection((int) sp);
+                                spp = Double.parseDouble(spinner.getItemAtPosition((int) sp).toString()) * 1000;
+
+                            } else {
+                              if (!ID.equals("1")) {
+                                  sp = Double.parseDouble(dataSnapshot.getValue().toString());
+                                  spinner.setSelection((int) sp);
+                                  spp = Double.parseDouble(spinner.getItemAtPosition((int) sp).toString()) * 1000;
+                                  Toast.makeText(getApplicationContext(), id, Toast.LENGTH_LONG).show();
+                              }else{spp = 0;}
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                    if (!ID.equals(id2)){spinner.setVisibility(View.GONE);}
                 databaseReference = firebaseDatabase.getReference().child(id);
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -176,19 +241,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17));
                                     i1 = 1;
                                 }
+  
                                 for (int x = 0; x < dataList.size(); x++) {
                                     if (!dataList.get(i).getId().equals(dataList.get(x).getId())) {
-
+                                        //  Toast.makeText(getBaseContext(), spp + "meter", Toast.LENGTH_LONG).show();
                                         double dis = meterDistanceBetweenPoints(Float.parseFloat(dataList.get(i).getLocationla()), Float.parseFloat(dataList.get(i).getLocationlo()), Float.parseFloat(dataList.get(x).getLocationla()), Float.parseFloat(dataList.get(x).getLocationlo()));
-                                        if (dis > 100) {
-                                            Toast.makeText(getBaseContext(), dis + "meter", Toast.LENGTH_LONG).show();
+                                        if (dis > spp) {
+                                            if (spp!=0){
+                                                //Toast.makeText(getBaseContext(), token, Toast.LENGTH_LONG).show();
+                                                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                                DatabaseReference databaseReference = firebaseDatabase.getReference().child("Tokens").child(id3);
+                                                databaseReference.addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                            datalist2.add(dataSnapshot.getValue(String.class));
+                                                        }
+                                                        for (i = 0; datalist2.size() > i; i++) {
+                                                            if (!token.equals(datalist2.get(i))) {
+                                                                FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist2.get(i), "alerm", "The Need Help", getApplicationContext(), MapsActivity.this);
+                                                                notificationsSender.SendNotifications();
+
+                                                            }
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+
+                                                });
+
+                                                datalist2.clear();
+                                                z=1;
+                                            }
+
                                         }
                                     }
                                 }
                                 LatLng mLatLng = new LatLng(Double.parseDouble(ida), Double.parseDouble(ido));
                                 CircleOptions circleOptions = new CircleOptions()
                                         .center(mLatLng)   //set center
-                                        .radius(10)   //set radius in meters
+                                        .radius(spp)   //set radius in meters
                                         .fillColor(Color.parseColor("#CCFB2323"))  //default
                                         .strokeColor(Color.BLACK)
                                         .strokeWidth(5);
@@ -228,6 +324,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+        DatabaseReference databaseReference = firebaseDatabase.getReference().child("sp" + id3);
+        databaseReference.child("sp").setValue(spinner.getSelectedItemPosition());
+        getlocaiondatabase();
     }
 
     @Override

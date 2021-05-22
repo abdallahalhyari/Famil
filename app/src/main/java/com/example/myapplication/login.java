@@ -2,12 +2,15 @@ package com.example.myapplication;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +26,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class login extends AppCompatActivity {
-    EditText mEmail,mPassword;
+    EditText mEmail, mPassword;
     Button mLoginBtn;
-    TextView mCreateBtn,forgotTextLink;
+    TextView mCreateBtn, forgotTextLink;
     ProgressBar progressBar;
     FirebaseAuth fAuth;
 
@@ -55,6 +58,9 @@ public class login extends AppCompatActivity {
                     return;
                 }
 
+
+
+
                 if (TextUtils.isEmpty(password)) {
                     mPassword.setError("Password is Required.");
                     return;
@@ -73,12 +79,14 @@ public class login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            if (fAuth.getCurrentUser().isEmailVerified()){
+                            if (fAuth.getCurrentUser().isEmailVerified()) {
                                 progressBar.setVisibility(View.GONE);
                                 Toast.makeText(login.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(getApplicationContext(), MapsActivity.class));
-                            }else {  progressBar.setVisibility(View.GONE);
-                                Toast.makeText(login.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show(); }
+                                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                            } else {
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(login.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
+                            }
 
 
                         } else {
@@ -96,7 +104,7 @@ public class login extends AppCompatActivity {
         mCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               onBackPressed();
+                onBackPressed();
             }
         });
 
@@ -105,16 +113,25 @@ public class login extends AppCompatActivity {
             public void onClick(View v) {
 
                 final EditText resetMail = new EditText(v.getContext());
+                resetMail.setHint("Email");
+                resetMail.setTextColor(getResources().getColor(R.color.black));
                 final AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(v.getContext());
                 passwordResetDialog.setTitle("Reset Password ?");
                 passwordResetDialog.setMessage("Enter Your Email To Received Reset Link.");
+                resetMail.setTextSize(18);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        150,
+                        45
+                );
+                resetMail.setLayoutParams(params);
+                resetMail.setBackgroundResource(R.drawable.forget);
                 passwordResetDialog.setView(resetMail);
-
+                passwordResetDialog.setIcon(R.drawable.pass);
                 passwordResetDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // extract the email and send reset link
-                        String mail = resetMail.getText().toString();
+                        String mail = resetMail.getText().toString().trim();
                         fAuth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {

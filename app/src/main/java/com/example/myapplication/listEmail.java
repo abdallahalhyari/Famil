@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.storage.internal.Sleeper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,17 +36,12 @@ public class listEmail extends AppCompatActivity {
     static RecyclerView recview;
     static ArrayList<User> datalist, listfound, listcheck;
     Adapter adapter;
-
-    String IdUser;
     HashSet<User> hashSet;
     FirebaseFirestore fStore;
-    String check;
     FirebaseAuth fAuth;
-    FirebaseUser user;
     DocumentReference documentReference;
     String id, ID;
     int i = 0;
-    Intent intent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,51 +60,50 @@ public class listEmail extends AppCompatActivity {
         fStore = FirebaseFirestore.getInstance();
         ID = Objects.requireNonNull(fAuth.getCurrentUser()).getUid();
 
+        if (i == 0) {
 
-
-        documentReference = fStore.collection("user").document(ID);
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                if (documentSnapshot.exists()) {
-                    id = documentSnapshot.getString("Id");
-                    if (id != "1") {
-                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                        DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + id);
-                        databaseReference.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                datalist.clear();
-                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                    datalist.add(dataSnapshot.getValue(User.class));
-                                }
-                                for (; datalist.size() > i; i++) {
-                                    if (!datalist.get(i).getId().equals("1")) {
-                                        datalist.remove(i);
+            documentReference = fStore.collection("user").document(ID);
+            documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    if (documentSnapshot.exists()) {
+                        id = documentSnapshot.getString("Id");
+                        if (id != "1") {
+                            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                            DatabaseReference databaseReference = firebaseDatabase.getReference().child("parent" + id);
+                            databaseReference.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    datalist.clear();
+                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                        if (dataSnapshot.getValue(User.class).getId().equals("1")) {
+                                            datalist.add(dataSnapshot.getValue(User.class));
+                                        }
                                     }
+
+
+                                    adapter.notifyDataSetChanged();
+
                                 }
 
-                                adapter.notifyDataSetChanged();
+                                //        }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
+                                }
+                            });
 
-                            //        }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                        }
 
-                            }
-                        });
 
+                    } else {
+                        Log.d("tag", "onEvent: Document do not exists");
                     }
 
-
-                } else {
-                    Log.d("tag", "onEvent: Document do not exists");
                 }
 
-            }
-
-        });
+            });
+        }
         adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -117,13 +113,16 @@ public class listEmail extends AppCompatActivity {
             @Override
             public void onDeleteClick(int position) {
                 removeItem(position);
+
             }
         });
     }
 
+    @SuppressLint("RestrictedApi")
     public void removeItem(int position) {
         datalist.remove(position);
         adapter.notifyItemRemoved(position);
+
     }
 }
 

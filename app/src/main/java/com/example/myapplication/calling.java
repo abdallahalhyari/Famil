@@ -61,45 +61,47 @@ import kotlin.jvm.internal.Intrinsics;
 public class calling extends AppCompatActivity {
 
     private String username;
-
     private String friendsUsername;
     private boolean isPeerConnected = false;
     private boolean isAudio = true;
     private boolean isVideo = true;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-
-    ListView recview;
-    Adapter adapter;
-    TextView friendNameEdit;
+    RecyclerView recview;
+    Adapter_calling adapter;
     ImageView toggleAudioBtn, toggleVideoBtn;
     WebView webView;
-    ArrayList<String> datalist;
+    ArrayList<User> datalist;
     DocumentReference documentReference;
     FirebaseFirestore fStore;
     String id;
     int i = 0;
-    ArrayAdapter<String> itemsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calling);
         webView = findViewById(R.id.webView);
-        recview = (ListView) findViewById(R.id.recycler);
-        datalist = new ArrayList<>();
-        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, datalist);
-        recview.setAdapter(itemsAdapter);
+        recview =  findViewById(R.id.recycler);
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
-
+        recview.setHasFixedSize(true);
+        recview.setLayoutManager(new LinearLayoutManager(this));
+        datalist = new ArrayList<>();
+        adapter = new Adapter_calling(datalist, this);
+        recview.setAdapter(adapter);
         fStore = FirebaseFirestore.getInstance();
-        recview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        adapter.setOnItemClickListener(new Adapter_calling.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                friendsUsername = friendNameEdit.getText().toString();
-               friendsUsername= recview.getAdapter().getItem(position).toString();
+            public void onItemClick(int position) {
+                friendsUsername= datalist.get(position).getName();
                 sendCallRequest();
+            }
+
+            @Override
+            public void onDeleteClick(int position) {
+
             }
         });
 
@@ -107,7 +109,7 @@ public class calling extends AppCompatActivity {
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@androidx.annotation.Nullable DocumentSnapshot value, @androidx.annotation.Nullable FirebaseFirestoreException error) {
-                if (value.exists()) {
+                if (value != null && value.exists()) {
                     username = value.getString("name");
                     id = value.getString("parentid");
                     DatabaseReference databaseReference = firebaseDatabase.getReference().child(id);
@@ -116,17 +118,12 @@ public class calling extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             datalist.clear();
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                datalist.add(dataSnapshot.getValue(User.class).getName());
+                                if (!dataSnapshot.getValue(User.class).getName().equals(username)){
+                                datalist.add(dataSnapshot.getValue(User.class));}
                             }
 
-                            for (; datalist.size()> i; i++) {
-                                if (datalist.get(i).equals(username)) {
-                                    datalist.remove(i);
-                                }
-                            }
+                            adapter.notifyDataSetChanged();
 
-                            itemsAdapter.notifyDataSetChanged();
-                            
                         }
 
                         @Override
@@ -258,6 +255,7 @@ public class calling extends AppCompatActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private final void onCallRequest(String caller) {
         RelativeLayout callLayout = findViewById(R.id.callLayout);
         TextView incomingCallTxt = findViewById(R.id.incomingCallTxt);
@@ -270,6 +268,7 @@ public class calling extends AppCompatActivity {
             acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(),"jj",Toast.LENGTH_LONG).show();
                     databaseReference.child(username).child("connId").setValue(uniqueId);
                     databaseReference.child(username).child("isAvailable").setValue(true);
                     callLayout.setVisibility(View.GONE);

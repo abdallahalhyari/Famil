@@ -109,7 +109,7 @@
         android:layout_marginEnd="50dp"
         android:background="@drawable/text_design1"
         android:ems="10"
-        android:hint="Phone"
+        android:hint="mobile number"
         android:inputType="textPhonetic"
         android:padding="10dp"
         android:textColor="#0A1B53"
