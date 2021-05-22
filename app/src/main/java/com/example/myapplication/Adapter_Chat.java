@@ -21,6 +21,11 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -37,6 +42,7 @@ import java.util.ArrayList;
 class Adapter_Chat extends ArrayAdapter<String> {
     private final ArrayList<String> dataSet;
     Context mContext;
+    String na;
 
     public Adapter_Chat(ArrayList<String> arrayList, Context context) {
         super(context, R.layout.chating, arrayList);
@@ -56,11 +62,12 @@ class Adapter_Chat extends ArrayAdapter<String> {
     int i = 0;
     ViewHolder viewHolder;
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+
     @SuppressLint("RestrictedApi")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-         // view lookup cache stored in tag
+        // view lookup cache stored in tag
 
         final View result;
 
@@ -96,19 +103,35 @@ class Adapter_Chat extends ArrayAdapter<String> {
                     @Override
                     public void onSuccess(Uri uri) {
                         DocumentReference documentReference;
-                        String id=FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                        String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         Log.d("TAG", "aEmail not sent");
                         Picasso.get().load(uri).into(viewHolder.imageView);
                         // viewHolder.imageView.setImageURI(uri);
-                         documentReference = fStore.collection("user").document(id);
-                        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        //  DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference().child(dataSet.get(position));
+                        // viewHolder.txtName.setText( databaseReference2.getKey());
+
+                        DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference().child("name");
+
+                        databaseReference2.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                if (value != null) {
-                                    viewHolder.txtName.setText(value.getString("name"));
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                String[] separated = dataSet.get(position).split("\\/");
+                                String[] separated2 = separated[1].split("/");
+                                    for (DataSnapshot Snapshot : snapshot.getChildren()) {
+                                        if (Snapshot.getKey().equals(separated2[0])) {
+                                        viewHolder.txtName.setText(Snapshot.getValue(String.class));
+                                    }
                                 }
                             }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
                         });
+
                     }
                 });
             } catch (Exception e) {

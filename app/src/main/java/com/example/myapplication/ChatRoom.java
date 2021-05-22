@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -85,7 +88,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     private EditText input_msg;
     private ListView listView_chat;
     ArrayList<String> list_chat;
-    String uri1;
+    String na;
     Adapter_Chat arrayAdapter;
     ArrayList<String> datalist;
     private String name;
@@ -327,8 +330,8 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
             finish();
         }
         if (id == R.id.nav_logout) {
-            fAuth.signOut();
-            finish();
+          showDialog(ChatRoom.this,"Are you sure to exit? ","");
+
         }
         if (id == R.id.nav_call) {
             toolbar.setTitle("Home");
@@ -338,28 +341,28 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
 
         }
         if (id == R.id.nav_share) {
-          //  File im=new File(getApplicationContext().getApplicationInfo().sourceDir);
+            //  File im=new File(getApplicationContext().getApplicationInfo().sourceDir);
             drawer.close();
             Intent shareAPkIntent = new Intent();
             shareAPkIntent.setAction(Intent.ACTION_SEND);
             shareAPkIntent.setType("text/plain");
             shareAPkIntent.putExtra(Intent.EXTRA_SUBJECT, "CCC Course App");
-            shareAPkIntent.putExtra(Intent.EXTRA_TEXT, "Download this Application now:-https://www.youtube.com/watch?v=e0fqpn6Uo4U");
-                    //BuildConfig.APPLICATION_ID + ".provider", im));
+            shareAPkIntent.putExtra(Intent.EXTRA_TEXT, "Download this Application now:-https://drive.google.com/file/d/1A7NVMaCN6zJVqNKbq-k_VrgdQGGw4TpZ/view?usp=sharing");
+            //BuildConfig.APPLICATION_ID + ".provider", im));
 
-          //  shareAPkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            //  shareAPkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
 
-            this.startActivity(Intent.createChooser(shareAPkIntent,"Share APK"));
+            this.startActivity(Intent.createChooser(shareAPkIntent, "Share APK"));
 
         }
         if (id == R.id.nav_send) {
             toolbar.setTitle("Home");
             drawer.close();
-            String recipientList = "talhyari@gmail.com";
+            String recipientList = "Raqibjo@gmail.com";
             String[] recipients = recipientList.split(",");
             String subject = "";
-            String message ="";
+            String message = "";
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.putExtra(Intent.EXTRA_EMAIL, recipients);
             intent.putExtra(Intent.EXTRA_SUBJECT, subject);
@@ -403,7 +406,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
 
     private void SelectImage() {
 
-        final CharSequence[] items = { "Gallery", "Cancel"};
+        final CharSequence[] items = {"Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ChatRoom.this);
         builder.setTitle("Add Image");
@@ -434,6 +437,29 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_FILE) {
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                //firebaseDatabase.getReference().child("name").child( id).setValue(na);
+
+                DatabaseReference databaseReference = firebaseDatabase.getReference().child("Tokens").child(id);
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            datalist.add(dataSnapshot.getValue(String.class));
+                        }
+                        for (i = 0; datalist.size() > i; i++) {
+                            if (!token.equals(datalist.get(i))) {
+                                FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist.get(i), name, "sent image", getApplicationContext(), ChatRoom.this);
+                                notificationsSender.SendNotifications();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
                 String id = getUniqueID();
                 Uri selectedImageUri = data.getData();
                 final StorageReference fileRef = storageReference.child("users/" + id + "/profile.jpg");
@@ -443,31 +469,21 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
                         Map<String, Object> map = new HashMap<String, Object>();
                         temp_key = root.push().getKey();
                         root.updateChildren(map);
-
                         DatabaseReference message_root = root.child(temp_key);
                         Map<String, Object> map2 = new HashMap<String, Object>();
                         map2.put("name", "users/" + id + "/profile.jpg");
-                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                        DatabaseReference databaseReference = firebaseDatabase.getReference().child("Tokens").child(id);
-                        databaseReference.addValueEventListener(new ValueEventListener() {
+                        documentReference = fStore.collection("user").document(fAuth.getCurrentUser().getUid());
+                        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                    datalist.add(dataSnapshot.getValue(String.class));
-                                }
-                                for (i = 0; datalist.size() > i; i++) {
-                                    if (!token.equals(datalist.get(i))) {
-                                        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist.get(i), "name", "input_msg.getText().toString()", getApplicationContext(), ChatRoom.this);
-                                        notificationsSender.SendNotifications();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference().child("name").child(id);
+                                databaseReference2.setValue(value.getString("name"));
+//.child("users/" + id + "/profile.jpg")
                             }
                         });
+
+
+
 
                         message_root.updateChildren(map2);
                         datalist.clear();
@@ -481,6 +497,42 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
 
     private final String getUniqueID() {
         return UUID.randomUUID().toString();
+    }
+    public void showDialog(Activity activity, String msg, String msg2) {
+
+        final Dialog dialog = new Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.round_corner);
+        LottieAnimationView lottieAnimationView= dialog.findViewById(R.id.a);
+        lottieAnimationView.setVisibility(View.GONE);
+        TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
+        text.setText(msg);
+        TextView text2 = (TextView) dialog.findViewById(R.id.text_dialog2);
+        text2.setText(msg2);
+        EditText ed = dialog.findViewById(R.id.ema);
+        ed.setVisibility(View.GONE);
+        Button dialogButton1 = (Button) dialog.findViewById(R.id.btn1);
+        dialogButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fAuth.signOut();
+                finish();
+                dialog.dismiss();
+
+            }
+        });
+
+        Button dialogButton2 = (Button) dialog.findViewById(R.id.btn2);
+        dialogButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
     }
 }
 

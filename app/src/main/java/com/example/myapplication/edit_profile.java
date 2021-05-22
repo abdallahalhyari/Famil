@@ -112,6 +112,23 @@ public class edit_profile extends AppCompatActivity {
                                 finish();
                             }
                         });
+                        Map<String, Object> user;
+                        user = new HashMap<>();
+
+                        user.put("name", profileFullName.getText().toString());
+                        user.put("phone", profilePhone.getText().toString());
+                        DocumentReference documentReference = fStore.collection("user").document(fAuth.getCurrentUser().getUid());
+                        documentReference.update(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess: user Profile is created for ");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: " + e.toString());
+                            }
+                        });
                         Toast.makeText(edit_profile.this, "Profile Updated", Toast.LENGTH_SHORT).show();
                         onBackPressed();
 
@@ -154,6 +171,7 @@ public class edit_profile extends AppCompatActivity {
     }
 
     private void uploadImageToFirebase(Uri imageUri) {
+
         // uplaod image to firebase storage
         final StorageReference fileRef = storageReference.child("users/"+fAuth.getCurrentUser().getEmail()+"/profile.jpg");
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

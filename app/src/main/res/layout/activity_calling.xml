@@ -34,11 +34,12 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="97dp"
-            android:layout_marginTop="215dp"
+            android:layout_marginStart="70dp"
+            android:layout_marginTop="115dp"
             android:layout_marginEnd="70dp"
             android:layout_marginBottom="102dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
 
             <TextView
                 android:id="@+id/incomingCallTxt"
@@ -61,7 +62,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/call_button"
-                    android:layout_marginRight="40dp"
+                    android:layout_marginRight="30dp"
                     android:layout_toStartOf="@id/rejectBtn"
                     android:src="@drawable/ic_baseline_call_24"
                     tools:ignore="ObsoleteLayoutParam,RtlHardcoded" />
@@ -72,7 +73,6 @@
                     android:layout_height="80dp"
                     android:background="@drawable/call_button"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginLeft="40dp"
                     android:src="@drawable/ic_baseline_call_end_24"
                     tools:ignore="ObsoleteLayoutParam,RtlHardcoded" />
             </LinearLayout>
@@ -117,10 +117,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
         android:visibility="visible" />
 
 

@@ -1,16 +1,28 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.L;
+import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -112,7 +124,8 @@ public class listEmail extends AppCompatActivity {
 
             @Override
             public void onDeleteClick(int position) {
-                removeItem(position);
+                showDialog(listEmail.this, "Are you sure to remove it? ", "", position);
+
 
             }
         });
@@ -122,6 +135,42 @@ public class listEmail extends AppCompatActivity {
     public void removeItem(int position) {
         datalist.remove(position);
         adapter.notifyItemRemoved(position);
+
+    }
+
+    public void showDialog(Activity activity, String msg, String msg2, int position) {
+
+        final Dialog dialog = new Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.round_corner);
+        LottieAnimationView lottieAnimationView= dialog.findViewById(R.id.a);
+        lottieAnimationView.setVisibility(View.GONE);
+        TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
+        text.setText(msg);
+        TextView text2 = (TextView) dialog.findViewById(R.id.text_dialog2);
+        text2.setText(msg2);
+        EditText ed = dialog.findViewById(R.id.ema);
+        ed.setVisibility(View.GONE);
+        Button dialogButton1 = (Button) dialog.findViewById(R.id.btn1);
+        dialogButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeItem(position);
+                dialog.dismiss();
+
+            }
+        });
+
+        Button dialogButton2 = (Button) dialog.findViewById(R.id.btn2);
+        dialogButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
 
     }
 }
