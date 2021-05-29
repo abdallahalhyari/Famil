@@ -38,11 +38,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 // playing audio and vibration when user se reques
        if (remoteMessage.getNotification().getBody().equals("The Need Help")) {
-           MediaPlayer mediaPlayer= MediaPlayer.create(this,R.raw.alarm);
-           mediaPlayer.start();
+           MediaPlayer mediaPlayer= MediaPlayer.create(this,R.raw.em);
+          if (!mediaPlayer.isPlaying()){mediaPlayer.start();}
            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-           r.play();
+           if (!r.isPlaying()){  r.play();}
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                r.setLooping(false);
            }

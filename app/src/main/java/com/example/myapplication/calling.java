@@ -264,7 +264,7 @@ public class calling extends AppCompatActivity {
         if (!caller.equals("null")) {
             callLayout.setVisibility(View.VISIBLE);
             incomingCallTxt.setText(caller + " is calling...");
-
+            recview.setVisibility(View.GONE);
             acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -288,7 +288,7 @@ public class calling extends AppCompatActivity {
         }
     }
 
-    private final void switchToControls() {
+    private void switchToControls() {
         RelativeLayout inputLayout = findViewById(R.id.inputLayout);
         LinearLayout callControlLayout = findViewById(R.id.callControlLayout);
         inputLayout.setVisibility(View.GONE);

@@ -155,7 +155,7 @@
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="To phage profile picture press on it."
+        android:text="To change profile picture press on it."
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="22sp"

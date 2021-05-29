@@ -36,7 +36,7 @@ public class Help_Press extends AppCompatActivity {
     String id;
     ArrayList<String> datalist;
     int i = 0;
-    String token;
+    String token,name;
     FirebaseAuth fAuth;
 
     @Override
@@ -83,6 +83,7 @@ public class Help_Press extends AppCompatActivity {
                             @Override
                             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                                 id = value.getString("parentid");
+                                name=value.getString("name");
                                 token = Objects.requireNonNull(task.getResult()).getToken();
 
                             }
@@ -94,9 +95,6 @@ public class Help_Press extends AppCompatActivity {
     }
 
     public void help(View view) {
-
-
-        Toast.makeText(this, token, Toast.LENGTH_LONG).show();
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child("Tokens").child(id);
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -107,7 +105,7 @@ public class Help_Press extends AppCompatActivity {
                 }
                 for (i = 0; datalist.size() > i; i++) {
                     if (!token.equals(datalist.get(i))) {
-                        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist.get(i), "alerm", "The Need Help", getApplicationContext(), Help_Press.this);
+                        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist.get(i), name, "The Need Help", getApplicationContext(), Help_Press.this);
                         notificationsSender.SendNotifications();
                     }
                 }

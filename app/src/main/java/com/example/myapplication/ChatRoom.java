@@ -116,6 +116,14 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         setContentView(R.layout.activity_chat_room);
         toolbar = findViewById(R.id.toolbar);
 
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        token = Objects.requireNonNull(task.getResult()).getToken();
+                        FirebaseDatabase.getInstance().getReference("Tokens").child(id).child(fAuth.getCurrentUser().getUid()).setValue(token);
+                    }
+                });
         FirebaseMessaging.getInstance().subscribeToTopic("all");
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer);
@@ -217,23 +225,23 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
 
                 root.addChildEventListener(new ChildEventListener() {
                     @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
                         Add_Chat(dataSnapshot);
                     }
 
                     @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        Add_Chat(dataSnapshot);
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
+                         Add_Chat(dataSnapshot);
 
                     }
 
                     @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
                     }
 
                     @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
 
                     }
 
@@ -262,14 +270,6 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         }
 
 
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        token = Objects.requireNonNull(task.getResult()).getToken();
-                        FirebaseDatabase.getInstance().getReference("Tokens").child(id).child(fAuth.getCurrentUser().getUid()).setValue(token);
-                    }
-                });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -346,7 +346,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
             Intent shareAPkIntent = new Intent();
             shareAPkIntent.setAction(Intent.ACTION_SEND);
             shareAPkIntent.setType("text/plain");
-            shareAPkIntent.putExtra(Intent.EXTRA_SUBJECT, "CCC Course App");
+            shareAPkIntent.putExtra(Intent.EXTRA_SUBJECT, "RaqipJo");
             shareAPkIntent.putExtra(Intent.EXTRA_TEXT, "Download this Application now:-https://drive.google.com/file/d/1A7NVMaCN6zJVqNKbq-k_VrgdQGGw4TpZ/view?usp=sharing");
             //BuildConfig.APPLICATION_ID + ".provider", im));
 
@@ -364,10 +364,13 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
             String subject = "";
             String message = "";
             Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setData(Uri.parse("malito"));
+            intent.setType("text/plain");
+            intent.setPackage("com.google.android.gm");
             intent.putExtra(Intent.EXTRA_EMAIL, recipients);
             intent.putExtra(Intent.EXTRA_SUBJECT, subject);
             intent.putExtra(Intent.EXTRA_TEXT, message);
-            intent.setType("message/rfc822");
+
             startActivity(Intent.createChooser(intent, "Choose an email client"));
 
         }

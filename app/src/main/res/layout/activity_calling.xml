@@ -113,7 +113,10 @@
             android:src="@drawable/ic_baseline_mic_24" />
 
     </LinearLayout>
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/recycler1">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
@@ -121,7 +124,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="10dp"
-        android:visibility="visible" />
-
+        tools:listitem="@layout/activity_call"
+        />
+</RelativeLayout>
 
 </RelativeLayout>
