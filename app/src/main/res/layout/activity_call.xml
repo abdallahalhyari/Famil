@@ -19,11 +19,15 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <ImageView
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="150dp"
             android:id="@+id/image_view"
-            android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:src="@drawable/link" />
+            android:layout_marginTop="4dp"
+            android:src="@drawable/link"
+            app:shapeAppearanceOverlay="@style/Circular"
+           />
 
         <TextView
             android:id="@+id/name"
