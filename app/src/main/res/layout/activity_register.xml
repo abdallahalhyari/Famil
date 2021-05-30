@@ -127,7 +127,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="104dp"
         android:layout_marginEnd="50dp"
-        android:background="@drawable/text_design1"
+        android:background="@drawable/text_s"
         android:ems="10"
         android:hint="Enter your father's ID "
         android:inputType="textPhonetic"

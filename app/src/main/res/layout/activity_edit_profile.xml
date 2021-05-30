@@ -122,7 +122,6 @@
         android:id="@+id/textView9"
         android:layout_width="100dp"
         android:layout_height="35dp"
-        android:layout_marginStart="4dp"
         android:layout_marginTop="28dp"
         android:gravity="center"
         android:text="Email:"
