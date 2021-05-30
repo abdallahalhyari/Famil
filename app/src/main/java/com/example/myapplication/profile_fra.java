@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -183,6 +184,11 @@ public class profile_fra extends Fragment {
             @Override
             public void onClick(View v) {
                 String mail = ed.getText().toString().trim();
+                if (TextUtils.isEmpty(mail)) {
+                    ed.setError("Password is Required.");
+                    return;
+                }
+
                 user.updatePassword(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

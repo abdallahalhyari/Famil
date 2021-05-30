@@ -39,7 +39,7 @@
                 <ListView
                     android:id="@+id/View_chat"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:divider="@null"
                     android:dividerHeight="10dp"

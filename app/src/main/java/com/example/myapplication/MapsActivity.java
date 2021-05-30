@@ -146,7 +146,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         spinner.setOnItemSelectedListener(this);
 
         fAuth = FirebaseAuth.getInstance();
-
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -166,7 +165,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
-        getlocaiondatabase();
+        //getlocaiondatabase();
     }
 
 
@@ -203,9 +202,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             } else {
                               if (!ID.equals("1")) {
                                   sp = Double.parseDouble(dataSnapshot.getValue().toString());
-                                  spinner.setSelection((int) sp);
-                                  spp = Double.parseDouble(spinner.getItemAtPosition((int) sp).toString()) * 1000;
-                                  Toast.makeText(getApplicationContext(), id, Toast.LENGTH_LONG).show();
+                                  spinner.setSelection(0);
+                                  spp = 0;
                               }else{spp = 0;}
                             }
                         }
@@ -257,14 +255,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                                             datalist2.add(dataSnapshot.getValue(String.class));
                                                         }
-                                                        for (i = 0; datalist2.size() > i; i++) {
-                                                            if (!token.equals(datalist2.get(i))) {
-                                                                FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist2.get(i), "alerm", "The Need Help", getApplicationContext(), MapsActivity.this);
-                                                                notificationsSender.SendNotifications();
+                                                        if("1".equals(ID)) {
+                                                            for (i = 0; datalist2.size() > i; i++) {
+                                                                if (!token.equals(datalist2.get(i))) {
+                                                                    FcmNotificationsSender notificationsSender = new FcmNotificationsSender(datalist2.get(i), name, "The Need Help", getApplicationContext(), MapsActivity.this);
+                                                                    notificationsSender.SendNotifications();
 
+                                                                }
                                                             }
                                                         }
-
                                                     }
 
                                                     @Override

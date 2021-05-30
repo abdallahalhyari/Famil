@@ -63,23 +63,16 @@ public class Register extends AppCompatActivity {
     FirebaseAuth fAuth;
     ProgressBar progressBar;
     FirebaseFirestore fStore;
-    LocationManager locationManager;
     FirebaseUser firebaseUser;
     private boolean mLocationPermissionGranted = false;
-    String key = "";
     public String userID;
     int PERMISSION_ID = 44;
     private static long idCounter = 2021;
     public static String id_f;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    String password;
-    String email;
+    String email,phone,fullName,password, key = "";
     SharedPreferences sharedPreferences;
-    String fullName;
-    String phone;
-    Location currentLocation;
     private FusedLocationProviderClient mFusedLocationClient;
-    Intent call;
     GeoPoint geoPoint;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -94,7 +87,7 @@ public class Register extends AppCompatActivity {
         if (firebaseUser != null) {
             if (firebaseUser.isEmailVerified()) {
                 progressBar.setVisibility(View.INVISIBLE);
-                startActivity(new Intent(Register.this, MapsActivity.class));
+                startActivity(new Intent(Register.this, ChatRoom.class));
             } else {
                 progressBar.setVisibility(View.INVISIBLE);
                 startActivity(new Intent(Register.this, login.class));

@@ -11,6 +11,8 @@
     android:gravity="center">
  <com.airbnb.lottie.LottieAnimationView
      android:layout_weight="1"
+     android:id="@+id/lott"
+     app:lottie_enableMergePathsForKitKatAndAbove="true"
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"
      app:lottie_fileName="location.json"

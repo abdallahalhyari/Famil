@@ -85,7 +85,7 @@ public class login extends AppCompatActivity {
                             if (fAuth.getCurrentUser().isEmailVerified()) {
                                 progressBar.setVisibility(View.GONE);
                                 Toast.makeText(login.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                                startActivity(new Intent(getApplicationContext(), ChatRoom.class));
                             } else {
                                 progressBar.setVisibility(View.GONE);
                                 Toast.makeText(login.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
@@ -93,7 +93,7 @@ public class login extends AppCompatActivity {
 
 
                         } else {
-                            Toast.makeText(login.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(login.this,  task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
                         }
 
@@ -138,6 +138,10 @@ public class login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String mail =ed.getText().toString().trim();
+                if (TextUtils.isEmpty(mail)) {
+                    ed.setError("Password is Required.");
+                    return;
+                }
                 fAuth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
