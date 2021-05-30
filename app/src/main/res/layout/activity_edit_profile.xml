@@ -30,13 +30,13 @@
         android:id="@+id/profileImageView"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_person_black_24dp"
         app:shapeAppearanceOverlay="@style/Circular"
-        />
+        app:srcCompat="@drawable/ic_person_black_24dp" />
 
     <EditText
         android:id="@+id/profileEmailAddress"
@@ -64,8 +64,8 @@
         android:ems="10"
         android:hint="Phone"
         android:inputType="phone"
-        android:textColor="#0A1B53"
         android:padding="10dp"
+        android:textColor="#0A1B53"
         android:textColorHint="#0099CC"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/saveProfileInfo"
@@ -73,7 +73,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView10"
         app:layout_constraintTop_toBottomOf="@+id/profileEmailAddress"
-        app:layout_constraintVertical_bias="0.275" />
+        app:layout_constraintVertical_bias="0.204" />
 
     <Button
         android:id="@+id/saveProfileInfo"
@@ -129,6 +129,7 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="22sp"
+        android:paddingRight="17dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -149,22 +150,24 @@
         app:layout_constraintHorizontal_bias="0.012"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9"
-        app:layout_constraintVertical_bias="0.019" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
         android:text="To change profile picture press on it."
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:layout_marginBottom="30dp"
         app:layout_constraintBottom_toTopOf="@+id/profileFullName"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/profileImageView"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView12"

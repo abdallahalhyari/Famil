@@ -107,7 +107,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
     private DrawerLayout drawer;
     String token;
     int i;
-
+    String ida;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("ResourceAsColor")
     @Override
@@ -115,15 +115,6 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
         toolbar = findViewById(R.id.toolbar);
-
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        token = Objects.requireNonNull(task.getResult()).getToken();
-                        FirebaseDatabase.getInstance().getReference("Tokens").child(id).child(fAuth.getCurrentUser().getUid()).setValue(token);
-                    }
-                });
         FirebaseMessaging.getInstance().subscribeToTopic("all");
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer);
@@ -162,6 +153,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
                 return false;
             }
         });
+
         fAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
         fStore = FirebaseFirestore.getInstance();
@@ -181,7 +173,14 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
                 name = value.getString("name");
                 arrayAdapter = new Adapter_Chat(list_chat, ChatRoom.this);
                 listView_chat.setAdapter(arrayAdapter);
-
+                FirebaseInstanceId.getInstance().getInstanceId()
+                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                token = task.getResult().getToken();
+                                FirebaseDatabase.getInstance().getReference("Tokens").child(id).child(fAuth.getCurrentUser().getUid()).setValue(token);
+                            }
+                        });
                 btn_send_msg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
