@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -337,7 +338,6 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
             drawer.close();
             Intent intent = new Intent(getApplicationContext(), calling.class);
             startActivity(intent);
-
         }
         if (id == R.id.nav_share) {
             //  File im=new File(getApplicationContext().getApplicationInfo().sourceDir);
@@ -534,6 +534,14 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
         });
 
         dialog.show();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NavigationView navigationView= findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav_call).setChecked(false);
 
     }
 }
