@@ -268,7 +268,6 @@ public class calling extends AppCompatActivity {
             acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(),"jj",Toast.LENGTH_LONG).show();
                     databaseReference.child(username).child("connId").setValue(uniqueId);
                     databaseReference.child(username).child("isAvailable").setValue(true);
                     callLayout.setVisibility(View.GONE);
