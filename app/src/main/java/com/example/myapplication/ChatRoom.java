@@ -346,7 +346,7 @@ public class ChatRoom extends AppCompatActivity implements NavigationView.OnNavi
             shareAPkIntent.setAction(Intent.ACTION_SEND);
             shareAPkIntent.setType("text/plain");
             shareAPkIntent.putExtra(Intent.EXTRA_SUBJECT, "RaqipJo");
-            shareAPkIntent.putExtra(Intent.EXTRA_TEXT, "Download this Application now:-https://drive.google.com/file/d/1A7NVMaCN6zJVqNKbq-k_VrgdQGGw4TpZ/view?usp=sharing");
+            shareAPkIntent.putExtra(Intent.EXTRA_TEXT, "Download this Application now:-https://drive.google.com/file/d/1-GUADfw34IwxaZTKhxpAJMuQxz1bLFvd/view?usp=sharing");
             //BuildConfig.APPLICATION_ID + ".provider", im));
 
             //  shareAPkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
